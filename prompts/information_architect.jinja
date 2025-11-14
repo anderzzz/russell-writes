@@ -1,0 +1,33 @@
+ANALYTICAL FOCUS: INFORMATION STRUCTURE AND FLOW
+
+For the provided text, document:
+
+{% if include_paragraph_architecture %}
+{{ loop.index }}. PARAGRAPH ARCHITECTURE
+   - How is each paragraph organized?
+   - Topic sentence: where and how explicit?
+   - Does it build linearly or circularly?
+   - What's the ratio: claim/evidence/explanation?
+{% endif %}
+{% if include_coherence_mechanisms %}
+{{ loop.index }}. COHERENCE MECHANISMS
+   - How are sentences linked? (explicit connectors vs. implied)
+   - Track given vs. new information
+   - Subject consistency across sentences?
+   - Pronoun reference: clear or ambiguous?
+{% endif %}
+{% if include_logical_progression %}
+{{ loop.index }}. LOGICAL PROGRESSION
+   - Is the sequence deductive, inductive, or associative?
+   - Where are premises stated vs. assumed?
+   - How are qualifications positioned?
+   - Any logical gaps or jumps?
+{% endif %}
+{% if include_transitions %}
+{{ loop.index }}. TRANSITIONS
+   - Between sentences within paragraphs
+   - Between paragraphs
+   - How much connective tissue vs. substance?
+{% endif %}
+
+Provide: Structural maps, flow diagrams if helpful.

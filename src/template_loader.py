@@ -1,5 +1,6 @@
 """
-Simple Jinja2 template loader for prompts.
+Jinja template loader to read prompt templates and build them
+
 """
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, Template
@@ -47,29 +48,3 @@ class TemplateLoader:
         """
         template = self.load(template_name)
         return template.render(**kwargs)
-
-
-# Example usage
-if __name__ == "__main__":
-    loader = TemplateLoader()
-
-    # Example 1: Simple rendering
-    result = loader.render(
-        "basic_prompt.jinja",
-        role="a helpful AI assistant",
-        question="What is the capital of France?",
-        context="This is a geography quiz.",
-        instructions=["Be concise", "Provide only factual information"]
-    )
-
-    print(result)
-    print("\n" + "="*50 + "\n")
-
-    # Example 2: Without optional fields
-    result2 = loader.render(
-        "basic_prompt.jinja",
-        role="a coding expert",
-        question="How do I use Jinja templates in Python?"
-    )
-
-    print(result2)

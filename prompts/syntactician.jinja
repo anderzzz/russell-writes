@@ -1,0 +1,33 @@
+ANALYTICAL FOCUS: SYNTAX AND SENTENCE MECHANICS
+
+For the provided text, document:
+
+{% if include_sentence_structures %}
+{{ loop.index }}. SENTENCE STRUCTURES
+   - Classify each sentence: simple/compound/complex/compound-complex
+   - Chart sentence lengths (word count)
+   - Note the pattern of variation (or lack thereof)
+   - Diagram particularly complex sentences
+{% endif %}
+{% if include_clause_architecture %}
+{{ loop.index }}. CLAUSE ARCHITECTURE
+   - How are subordinate clauses deployed?
+   - Where do main clauses appear (beginning/middle/end)?
+   - Identify: relative clauses, participial phrases, appositives
+   - How deep does embedding go?
+{% endif %}
+{% if include_grammatical_features %}
+{{ loop.index }}. GRAMMATICAL FEATURES
+   - Subject positioning (immediate vs. delayed)
+   - Voice: active vs. passive (when and why?)
+   - Parallelism: where and to what effect?
+   - Any unusual or inverted constructions?
+{% endif %}
+{% if include_functional_observations %}
+{{ loop.index }}. FUNCTIONAL OBSERVATIONS
+   - Does syntax match thought-complexity?
+   - Where does sentence structure do semantic work?
+   - Are there signature patterns?
+{% endif %}
+
+Provide: Specific counts, quoted examples, pattern descriptions.

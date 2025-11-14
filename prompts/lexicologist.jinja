@@ -1,0 +1,33 @@
+ANALYTICAL FOCUS: VOCABULARY AND DICTION
+
+For the provided text, document:
+
+{% if include_lexical_register %}
+{{ loop.index }}. LEXICAL REGISTER
+   - Formal, informal, or mixed? Consistent or shifting?
+   - Technical terms: frequency and how they're introduced
+   - Latinate vs. Germanic/Anglo-Saxon vocabulary
+   - Average word length, syllable count
+{% endif %}
+{% if include_semantic_fields %}
+{{ loop.index }}. SEMANTIC FIELDS
+   - What domains do metaphors/analogies come from?
+   - Are abstractions paired with concrete terms?
+   - Identify recurring word families or roots
+   - Any unexpected or striking word choices?
+{% endif %}
+{% if include_precision_analysis %}
+{{ loop.index }}. PRECISION ANALYSIS
+   - Are words exact or approximate?
+   - Where are qualifiers used ("rather," "somewhat," "quite")?
+   - How much technical vocabulary vs. everyday language?
+   - Synonyms: is there variation or repetition?
+{% endif %}
+{% if include_clarity_mechanisms %}
+{{ loop.index }}. CLARITY MECHANISMS
+   - How are difficult concepts named/explained?
+   - Where does diction create or prevent ambiguity?
+   - Any jargon? How is it handled?
+{% endif %}
+
+Provide: Word frequency notes, specific examples with analysis.

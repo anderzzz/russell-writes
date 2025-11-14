@@ -1,0 +1,33 @@
+ANALYTICAL FOCUS: ECONOMY AND NECESSITY
+
+For the provided text, document:
+
+{% if include_word_economy %}
+{{ loop.index }}. WORD ECONOMY
+   - Could anything be cut without loss of meaning?
+   - Identify redundancies (if any)
+   - Long words: necessary or merely impressive?
+   - How much modification (adjectives/adverbs)?
+{% endif %}
+{% if include_structural_efficiency %}
+{{ loop.index }}. STRUCTURAL EFFICIENCY
+   - Could complex sentences be simplified?
+   - Should simple sentences be combined?
+   - Passive constructions: necessary or avoidable?
+   - Any bureaucratic or inflated phrasing?
+{% endif %}
+{% if include_density_analysis %}
+{{ loop.index }}. DENSITY ANALYSIS
+   - How much information per sentence?
+   - Ratio of content to scaffolding?
+   - Where is prose "loose" vs. "tight"?
+   - Any filler or throat-clearing?
+{% endif %}
+{% if include_subtraction_test %}
+{{ loop.index }}. THE SUBTRACTION TEST
+   - Imagine removing all modifiers: what's lost?
+   - Which words are doing heavy lifting?
+   - What's the minimum viable version?
+{% endif %}
+
+Provide: Before/after examples if suggesting cuts.
