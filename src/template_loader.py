@@ -6,34 +6,21 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, Template
 
 
+PROMPTS_PATH = (Path(__file__).parent.parent / "prompts").resolve()
+
 class TemplateLoader:
     """Load and render Jinja2 templates from the prompts directory."""
 
-    def __init__(self, template_dir: str = "prompts"):
+    def __init__(self):
         """
         Initialize the template loader.
 
-        Args:
-            template_dir: Directory containing template files
         """
-        self.template_dir = Path(template_dir)
         self.env = Environment(
-            loader=FileSystemLoader(self.template_dir),
+            loader=FileSystemLoader(PROMPTS_PATH),
             trim_blocks=True,
             lstrip_blocks=True
         )
-
-    def load(self, template_name: str) -> Template:
-        """
-        Load a template by name.
-
-        Args:
-            template_name: Name of the template file (e.g., 'basic_prompt.jinja')
-
-        Returns:
-            Jinja2 Template object
-        """
-        return self.env.get_template(template_name)
 
     def render(self, template_name: str, **kwargs) -> str:
         """
@@ -45,6 +32,15 @@ class TemplateLoader:
 
         Returns:
             Rendered template as a string
+
         """
-        template = self.load(template_name)
+        if not template_name.endswith(".jinja"):
+            template_name += ".jinja"
+        template = self.env.get_template(template_name)
         return template.render(**kwargs)
+
+
+if __name__ == "__main__":
+    loader = TemplateLoader()
+    x =loader.render("basic_prompt.jinja")
+    print(x)
