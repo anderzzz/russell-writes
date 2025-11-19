@@ -1,329 +1,439 @@
 """
-LLM wrapper and abstraction layer over LiteLLM.
+Simple LLM wrapper for text completion.
 
-Provides unified interface for:
-- Pure text completion (text in, text out)
-- Tool/function calling (text in, function execution, text out)
+Provides a clean interface for text-in, text-out interactions with any
+LiteLLM-supported model.
 """
-
-from typing import Any, Dict, List, Optional, Callable, Union
+from typing import Optional, Union
+import json
 import litellm
 
-from models.llm_config_models import (
-    LLMRole,
-    Message,
-    LLMResponse,
-    LLMConfig
-)
+from models.llm_config_models import LLMConfig, Message, LLMRole, LLMResponse
+from tools import Tool
 
 
-class BaseLLM:
+class LLM:
     """
-    Base LLM wrapper for pure text completion.
+    Simple LLM wrapper for text completion.
 
     Handles basic text-in, text-out interactions with any LiteLLM-supported model.
+    Focuses on simplicity and clarity over feature completeness.
     """
 
-    def __init__(self, config: LLMConfig):
-        self.config = config
-        self.conversation_history: List[Message] = []
-
-    def _build_litellm_kwargs(self, messages: List[Message], **kwargs) -> Dict[str, Any]:
-        """Build kwargs dict for litellm.completion()."""
-        litellm_kwargs = {
-            "model": self.config.model,
-            "messages": [msg.to_dict() for msg in messages],
-            "temperature": kwargs.get("temperature", self.config.temperature),
-            "max_tokens": kwargs.get("max_tokens", self.config.max_tokens),
-            "top_p": kwargs.get("top_p", self.config.top_p),
-            "frequency_penalty": kwargs.get("frequency_penalty", self.config.frequency_penalty),
-            "presence_penalty": kwargs.get("presence_penalty", self.config.presence_penalty),
-        }
-
-        # Add optional parameters
-        if self.config.timeout:
-            litellm_kwargs["timeout"] = self.config.timeout
-        if self.config.api_key:
-            litellm_kwargs["api_key"] = self.config.api_key
-        if self.config.api_base:
-            litellm_kwargs["api_base"] = self.config.api_base
-
-        # Merge any extra params
-        litellm_kwargs.update(self.config.extra_params)
-        litellm_kwargs.update(kwargs)
-
-        return litellm_kwargs
-
-    def _parse_response(self, raw_response: Any) -> LLMResponse:
-        """Parse raw LiteLLM response into standardized format."""
-        choice = raw_response.choices[0]
-        message = choice.message
-
-        return LLMResponse(
-            content=getattr(message, "content", None),
-            tool_calls=getattr(message, "tool_calls", None),
-            finish_reason=choice.finish_reason,
-            model=raw_response.model,
-            usage=raw_response.usage.dict() if hasattr(raw_response, "usage") else None,
-            raw_response=raw_response
-        )
-
-    def complete(
-        self,
-        messages: Union[str, List[Message]],
-        system_prompt: Optional[str] = None,
-        **kwargs
-    ) -> LLMResponse:
+    def __init__(self, model: str, **config):
         """
-        Execute a completion request.
+        Initialize the LLM with a model and configuration.
 
         Args:
-            messages: Either a string (converted to user message) or list of Message objects
-            system_prompt: Optional system prompt to prepend
+            model: Model identifier (e.g., "gpt-4", "claude-3")
+            **config: Additional configuration parameters (temperature, max_tokens, etc.)
+        """
+        self.config = LLMConfig(model=model, **config)
+
+    def complete(
+            self,
+            prompt: Union[str, list[Message]],
+            system: Optional[str] = None,
+            **kwargs
+    ) -> LLMResponse:
+        """
+        Execute a single completion.
+
+        Args:
+            prompt: Either a string (converted to user message) or list of Messages
+            system: Optional system prompt to prepend
             **kwargs: Override config parameters for this call
 
         Returns:
-            LLMResponse with the model's output
+            LLMResponse containing the model's output
+
+        Example:
+            llm = LLM("gpt-4")
+            response = llm.complete("What is the capital of France?")
+            print(response.content)
         """
-        # Convert string to message list
-        if isinstance(messages, str):
-            msg_list = [Message(role=LLMRole.USER, content=messages)]
+        # Convert string prompt to message list
+        if isinstance(prompt, str):
+            messages = [Message(role=LLMRole.USER, content=prompt)]
         else:
-            msg_list = list(messages)
+            messages = list(prompt)
 
-        # Prepend system prompt if provided
-        if system_prompt:
-            msg_list.insert(0, Message(role=LLMRole.SYSTEM, content=system_prompt))
+        # Prepend system message if provided
+        if system:
+            messages.insert(0, Message(role=LLMRole.SYSTEM, content=system))
 
-        # Build and execute request
-        litellm_kwargs = self._build_litellm_kwargs(msg_list, **kwargs)
-        raw_response = litellm.completion(**litellm_kwargs)
+        # Build the request
+        request_params = self._build_request_params(messages, **kwargs)
 
+        # Execute the completion
+        raw_response = litellm.completion(**request_params)
+
+        # Parse and return the response
         return self._parse_response(raw_response)
 
-    def chat(
-        self,
-        user_message: str,
-        system_prompt: Optional[str] = None,
-        reset_history: bool = False,
-        **kwargs
-    ) -> LLMResponse:
+    def _build_request_params(self, messages: list[Message], **overrides) -> dict:
         """
-        Stateful chat interface maintaining conversation history.
+        Build parameters for the LiteLLM completion call.
 
         Args:
-            user_message: The user's message
-            system_prompt: Optional system prompt (added once at start)
-            reset_history: Clear history before this message
+            messages: List of messages to send
+            **overrides: Parameters to override from config
+
+        Returns:
+            Dictionary of parameters for litellm.completion()
+        """
+        # Start with config defaults
+        params = {
+            "model": self.config.model,
+            "messages": [msg.model_dump(exclude_none=True) for msg in messages],
+            "temperature": self.config.temperature,
+        }
+
+        # Add optional config parameters if set
+        if self.config.max_tokens:
+            params["max_tokens"] = self.config.max_tokens
+        if self.config.top_p != 1.0:
+            params["top_p"] = self.config.top_p
+        if self.config.frequency_penalty != 0.0:
+            params["frequency_penalty"] = self.config.frequency_penalty
+        if self.config.presence_penalty != 0.0:
+            params["presence_penalty"] = self.config.presence_penalty
+        if self.config.timeout:
+            params["timeout"] = self.config.timeout
+        if self.config.api_key:
+            params["api_key"] = self.config.api_key
+        if self.config.api_base:
+            params["api_base"] = self.config.api_base
+
+        # Apply any overrides for this specific call
+        params.update(overrides)
+
+        return params
+
+    def _parse_response(self, raw_response) -> LLMResponse:
+        """
+        Parse raw LiteLLM response into our standardized format.
+
+        Args:
+            raw_response: Raw response from litellm.completion()
+
+        Returns:
+            Standardized LLMResponse object
+        """
+        choice = raw_response.choices[0]
+        message = choice.message
+
+        # Extract usage information if available
+        usage = None
+        if hasattr(raw_response, 'usage'):
+            usage = {
+                "prompt_tokens": raw_response.usage.prompt_tokens,
+                "completion_tokens": raw_response.usage.completion_tokens,
+                "total_tokens": raw_response.usage.total_tokens
+            }
+
+        return LLMResponse(
+            content=getattr(message, 'content', None),
+            tool_calls=getattr(message, 'tool_calls', None),
+            finish_reason=choice.finish_reason,
+            model=raw_response.model,
+            usage=usage,
+            raw_response=raw_response
+        )
+
+
+class ToolLLM:
+    """
+    LLM with tool execution capabilities.
+
+    Manages tool registration, execution, and the control flow between
+    LLM responses and tool calls.
+    """
+
+    def __init__(self, model: str, **config):
+        """
+        Initialize the tool-enabled LLM.
+
+        Args:
+            model: Model identifier (must support function calling)
+            **config: Additional configuration parameters
+        """
+        self.config = LLMConfig(model=model, **config)
+        self.tools: dict[str, Tool] = {}
+        self.llm = LLM(model, **config)
+
+    def register_tool(self, tool: Tool):
+        """
+        Register a tool for use by the LLM.
+
+        Args:
+            tool: Tool instance to register
+
+        Example:
+            llm = ToolLLM("gpt-4")
+            llm.register_tool(WordCountTool())
+        """
+        self.tools[tool.config.name] = tool
+
+    def complete_with_tools(
+            self,
+            prompt: str,
+            system: Optional[str] = None,
+            max_iterations: int = 5,
+            **kwargs
+    ) -> str:
+        """
+        Execute completion with automatic tool handling.
+
+        The LLM will automatically invoke registered tools as needed to
+        answer the prompt, handling multiple rounds of tool calls if necessary.
+
+        Args:
+            prompt: User's question or request
+            system: Optional system prompt
+            max_iterations: Maximum rounds of tool execution
             **kwargs: Override config parameters
 
         Returns:
-            LLMResponse with the model's output
+            Final text response after all tool executions
+
         """
-        if reset_history:
-            self.conversation_history.clear()
+        # Initialize conversation with user prompt
+        messages = []
+        if system:
+            messages.append(Message(role=LLMRole.SYSTEM, content=system))
+        messages.append(Message(role=LLMRole.USER, content=prompt))
 
-        # Add system prompt if this is first message
-        if system_prompt and not self.conversation_history:
-            self.conversation_history.append(
-                Message(role=LLMRole.SYSTEM, content=system_prompt)
-            )
+        # Get tool schemas for the LLM
+        tool_schemas = [tool.to_openai_schema() for tool in self.tools.values()]
 
-        # Add user message
-        self.conversation_history.append(
-            Message(role=LLMRole.USER, content=user_message)
-        )
+        # Tool execution loop
+        for iteration in range(max_iterations):
+            # Get LLM response with tool schemas
+            response = self._call_llm_with_tools(messages, tool_schemas, **kwargs)
 
-        # Get response
-        response = self.complete(self.conversation_history, **kwargs)
+            # If no tool calls, we have our final answer
+            if not response.tool_calls:
+                return response.content or "No response generated."
 
-        # Add assistant response to history
-        if response.content:
-            self.conversation_history.append(
+            # Add assistant's message (with tool calls) to history
+            messages.append(
                 Message(
                     role=LLMRole.ASSISTANT,
-                    content=response.content,
+                    content=response.content or "",
                     tool_calls=response.tool_calls
                 )
             )
 
-        return response
+            # Execute each tool call and add results
+            for tool_call in response.tool_calls:
+                tool_result = self._execute_tool_call(tool_call)
+                messages.append(
+                    Message(
+                        role=LLMRole.TOOL,
+                        content=tool_result['output'],
+                        tool_call_id=tool_call['id'],
+                        name=tool_result['name']
+                    )
+                )
 
-    def clear_history(self):
-        """Clear conversation history."""
-        self.conversation_history.clear()
+        # If we've exhausted iterations, return last response
+        return response.content or "Maximum iterations reached without final answer."
 
-
-class ToolCallingLLM(BaseLLM):
-    """
-    Extended LLM wrapper with tool/function calling capabilities.
-
-    Handles tool definitions, tool call execution, and result integration.
-    """
-
-    def __init__(self, config: LLMConfig, tools: Optional[List[Dict[str, Any]]] = None):
-        super().__init__(config)
-        self.tools = tools or []
-        self.tool_handlers: Dict[str, Callable] = {}
-
-    def register_tool(self, tool_definition: Dict[str, Any], handler: Callable):
-        """
-        Register a tool with its handler function.
-
-        Args:
-            tool_definition: OpenAI-style tool definition dict
-            handler: Callable that executes the tool
-        """
-        tool_name = tool_definition["function"]["name"]
-        self.tools.append(tool_definition)
-        self.tool_handlers[tool_name] = handler
-
-    def complete_with_tools(
-        self,
-        messages: Union[str, List[Message]],
-        tools: Optional[List[Dict[str, Any]]] = None,
-        tool_choice: str = "auto",
-        system_prompt: Optional[str] = None,
-        **kwargs
+    def _call_llm_with_tools(
+            self,
+            messages: list[Message],
+            tool_schemas: list[dict],
+            **kwargs
     ) -> LLMResponse:
         """
-        Execute completion with tool calling enabled.
+        Call the LLM with tool schemas enabled.
 
         Args:
-            messages: User messages
-            tools: Tool definitions (defaults to registered tools)
-            tool_choice: "auto", "none", or specific tool name
-            system_prompt: Optional system prompt
+            messages: Conversation history
+            tool_schemas: OpenAI-format tool definitions
             **kwargs: Override config parameters
 
         Returns:
             LLMResponse potentially containing tool calls
         """
-        # Convert string to message list
-        if isinstance(messages, str):
-            msg_list = [Message(role=LLMRole.USER, content=messages)]
-        else:
-            msg_list = list(messages)
+        # Build request parameters
+        params = self._build_request_params(messages, **kwargs)
 
-        # Prepend system prompt if provided
-        if system_prompt:
-            msg_list.insert(0, Message(role=LLMRole.SYSTEM, content=system_prompt))
+        # Add tools if available
+        if tool_schemas:
+            params['tools'] = tool_schemas
+            params['tool_choice'] = 'auto'  # Let the model decide when to use tools
 
-        # Use provided tools or registered tools
-        active_tools = tools or self.tools
+        # Execute the completion
+        raw_response = litellm.completion(**params)
 
-        # Build request with tools
-        litellm_kwargs = self._build_litellm_kwargs(msg_list, **kwargs)
-        if active_tools:
-            litellm_kwargs["tools"] = active_tools
-            litellm_kwargs["tool_choice"] = tool_choice
-
-        raw_response = litellm.completion(**litellm_kwargs)
+        # Parse and return
         return self._parse_response(raw_response)
 
-    def execute_tool_calls(self, response: LLMResponse) -> List[Dict[str, Any]]:
+    def _execute_tool_call(self, tool_call: dict) -> dict:
         """
-        Execute tool calls from a response.
+        Execute a single tool call.
 
         Args:
-            response: LLMResponse containing tool calls
+            tool_call: Tool call from LLM response
 
         Returns:
-            List of tool results with id, name, and output
+            Dictionary with tool execution results
         """
-        if not response.has_tool_calls:
-            return []
+        function_name = tool_call['function']['name']
+        arguments_str = tool_call['function']['arguments']
 
-        results = []
-        for tool_call in response.tool_calls:
-            tool_id = tool_call["id"]
-            function_name = tool_call["function"]["name"]
-            arguments = tool_call["function"]["arguments"]
+        # Parse arguments (they come as JSON string)
+        try:
+            arguments = json.loads(arguments_str) if isinstance(arguments_str, str) else arguments_str
+        except json.JSONDecodeError:
+            return {
+                'name': function_name,
+                'output': f"Error: Failed to parse arguments for {function_name}"
+            }
 
-            # Execute the tool
-            if function_name in self.tool_handlers:
-                handler = self.tool_handlers[function_name]
-                # Parse arguments (usually JSON string)
-                import json
-                args = json.loads(arguments) if isinstance(arguments, str) else arguments
-                output = handler(**args)
-            else:
-                output = f"Error: Tool '{function_name}' not registered"
+        # Execute the tool
+        if function_name in self.tools:
+            try:
+                tool = self.tools[function_name]
+                output = tool.execute(**arguments)
+            except Exception as e:
+                output = f"Error executing {function_name}: {str(e)}"
+        else:
+            output = f"Error: Tool '{function_name}' not found"
 
-            results.append({
-                "tool_call_id": tool_id,
-                "name": function_name,
-                "output": str(output)
-            })
+        return {
+            'name': function_name,
+            'output': str(output)
+        }
 
-        return results
+    def _build_request_params(self, messages: list[Message], **overrides) -> dict:
+        """
+        Build parameters for the LiteLLM completion call.
 
-    def complete_with_tool_execution(
-        self,
-        messages: Union[str, List[Message]],
-        max_iterations: int = 5,
-        **kwargs
+        Inherits from base LLM's parameter building logic.
+        """
+        # Same as base LLM
+        params = {
+            "model": self.config.model,
+            "messages": [msg.model_dump(exclude_none=True) for msg in messages],
+            "temperature": self.config.temperature,
+        }
+
+        # Add optional config parameters
+        if self.config.max_tokens:
+            params["max_tokens"] = self.config.max_tokens
+        if self.config.top_p != 1.0:
+            params["top_p"] = self.config.top_p
+        if self.config.frequency_penalty != 0.0:
+            params["frequency_penalty"] = self.config.frequency_penalty
+        if self.config.presence_penalty != 0.0:
+            params["presence_penalty"] = self.config.presence_penalty
+        if self.config.timeout:
+            params["timeout"] = self.config.timeout
+        if self.config.api_key:
+            params["api_key"] = self.config.api_key
+        if self.config.api_base:
+            params["api_base"] = self.config.api_base
+
+        # Apply overrides
+        params.update(overrides)
+
+        return params
+
+    def _parse_response(self, raw_response) -> LLMResponse:
+        """Parse raw LiteLLM response into standardized format."""
+        choice = raw_response.choices[0]
+        message = choice.message
+
+        # Extract usage information
+        usage = None
+        if hasattr(raw_response, 'usage'):
+            usage = {
+                "prompt_tokens": raw_response.usage.prompt_tokens,
+                "completion_tokens": raw_response.usage.completion_tokens,
+                "total_tokens": raw_response.usage.total_tokens
+            }
+
+        return LLMResponse(
+            content=getattr(message, 'content', None),
+            tool_calls=getattr(message, 'tool_calls', None),
+            finish_reason=choice.finish_reason,
+            model=raw_response.model,
+            usage=usage,
+            raw_response=raw_response
+        )
+
+    def list_tools(self) -> list[str]:
+        """Return names of all registered tools."""
+        return list(self.tools.keys())
+
+    def get_tool(self, name: str) -> Optional[Tool]:
+        """Get a registered tool by name."""
+        return self.tools.get(name)
+
+
+class ConversationLLM(LLM):
+    """
+    Stateful LLM that maintains conversation history.
+
+    Extends the base LLM with conversation memory for multi-turn interactions.
+    """
+
+    def __init__(self, model: str, **config):
+        """Initialize with empty conversation history."""
+        super().__init__(model, **config)
+        self.history: list[Message] = []
+
+    def chat(
+            self,
+            message: str,
+            system: Optional[str] = None,
+            **kwargs
     ) -> LLMResponse:
         """
-        Execute completion with automatic tool execution loop.
-
-        Handles the full cycle: request -> tool calls -> execution -> next request
-        until the model returns a final text response or max iterations reached.
+        Send a message in the conversation context.
 
         Args:
-            messages: Initial messages
-            max_iterations: Maximum tool execution rounds
-            **kwargs: Override config parameters
+            message: User's message to send
+            system: System prompt (only used if history is empty)
+            **kwargs: Override config parameters for this call
 
         Returns:
-            Final LLMResponse after all tool executions
+            LLMResponse containing the assistant's reply
+
+        Example:
+            chat = ConversationLLM("gpt-4")
+            response1 = chat.chat("What's the capital of France?")
+            response2 = chat.chat("What's its population?")  # Remembers context
         """
-        # Convert to message list if needed
-        if isinstance(messages, str):
-            msg_list = [Message(role=LLMRole.USER, content=messages)]
-        else:
-            msg_list = list(messages)
+        # Add system message if this is the start of conversation
+        if system and not self.history:
+            self.history.append(Message(role=LLMRole.SYSTEM, content=system))
 
-        iteration = 0
-        while iteration < max_iterations:
-            # Get response
-            response = self.complete_with_tools(msg_list, **kwargs)
+        # Add user message to history
+        self.history.append(Message(role=LLMRole.USER, content=message))
 
-            # If no tool calls, we're done
-            if not response.has_tool_calls:
-                return response
+        # Get completion using full history
+        response = self.complete(self.history, **kwargs)
 
-            # Add assistant's tool call message to conversation
-            msg_list.append(Message(
-                role=LLMRole.ASSISTANT,
-                content=response.content or "",
-                tool_calls=response.tool_calls
-            ))
+        # Add assistant's response to history
+        if response.content:
+            self.history.append(
+                Message(
+                    role=LLMRole.ASSISTANT,
+                    content=response.content,
+                    tool_calls=response.tool_calls if response.tool_calls else None
+                )
+            )
 
-            # Execute tools and add results
-            tool_results = self.execute_tool_calls(response)
-            for result in tool_results:
-                msg_list.append(Message(
-                    role=LLMRole.TOOL,
-                    content=result["output"],
-                    tool_call_id=result["tool_call_id"],
-                    name=result["name"]
-                ))
-
-            iteration += 1
-
-        # Max iterations reached, return last response
         return response
 
+    def reset(self):
+        """Clear the conversation history."""
+        self.history.clear()
 
-# Convenience factory functions
-def create_text_llm(model: str, **config_kwargs) -> BaseLLM:
-    """Create a basic text completion LLM."""
-    config = LLMConfig(model=model, **config_kwargs)
-    return BaseLLM(config)
-
-
-def create_tool_llm(model: str, tools: Optional[List[Dict[str, Any]]] = None, **config_kwargs) -> ToolCallingLLM:
-    """Create a tool-calling LLM."""
-    config = LLMConfig(model=model, **config_kwargs)
-    return ToolCallingLLM(config, tools=tools)
+    def get_history(self) -> list[Message]:
+        """Return a copy of the conversation history."""
+        return list(self.history)
