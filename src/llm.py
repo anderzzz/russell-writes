@@ -20,15 +20,27 @@ class LLM:
     Focuses on simplicity and clarity over feature completeness.
     """
 
-    def __init__(self, model: str, **config):
+    def __init__(self, config: Union[str, LLMConfig], **kwargs):
         """
-        Initialize the LLM with a model and configuration.
+        Initialize the LLM with configuration.
 
         Args:
-            model: Model identifier (e.g., "gpt-4", "claude-3")
-            **config: Additional configuration parameters (temperature, max_tokens, etc.)
+            config: Either an LLMConfig object or a model string
+            **kwargs: If config is a string, these become config parameters
+
+        Example:
+            # Explicit config (recommended, matches PromptMaker pattern)
+            llm = LLM(LLMConfig(model="gpt-4", temperature=0.7))
+
+            # Shorthand for notebooks
+            llm = LLM("gpt-4", temperature=0.7)
         """
-        self.config = LLMConfig(model=model, **config)
+        if isinstance(config, str):
+            # Shorthand: model string + kwargs
+            self.config = LLMConfig(model=config, **kwargs)
+        else:
+            # Explicit: LLMConfig object (preferred)
+            self.config = config
 
     def complete(
             self,
@@ -150,15 +162,22 @@ class ToolLLM(LLM):
     LLM responses and tool calls.
     """
 
-    def __init__(self, model: str, **config):
+    def __init__(self, config: Union[str, LLMConfig], **kwargs):
         """
         Initialize the tool-enabled LLM.
 
         Args:
-            model: Model identifier (must support function calling)
-            **config: Additional configuration parameters
+            config: Either an LLMConfig object or a model string
+            **kwargs: If config is a string, these become config parameters
+
+        Example:
+            # Explicit config
+            llm = ToolLLM(LLMConfig(model="gpt-4", temperature=0.7))
+
+            # Shorthand
+            llm = ToolLLM("gpt-4", temperature=0.7)
         """
-        super().__init__(model, **config)
+        super().__init__(config, **kwargs)
         self.tools: dict[str, Tool] = {}
 
     def register_tool(self, tool: Tool):
