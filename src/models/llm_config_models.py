@@ -57,6 +57,6 @@ class LLMConfig(BaseModel):
     frequency_penalty: float = Field(default=0.0, ge=-2.0, le=2.0)
     presence_penalty: float = Field(default=0.0, ge=-2.0, le=2.0)
     timeout: int | None = Field(default=None, gt=0)
-    api_key: str | None = Field(default=None)
+    api_key: str
     api_base: str | None = Field(default=None)
     extra_params: dict = Field(default_factory=dict)
