@@ -142,7 +142,7 @@ class LLM:
         )
 
 
-class ToolLLM:
+class ToolLLM(LLM):
     """
     LLM with tool execution capabilities.
 
@@ -158,9 +158,8 @@ class ToolLLM:
             model: Model identifier (must support function calling)
             **config: Additional configuration parameters
         """
-        self.config = LLMConfig(model=model, **config)
+        super().__init__(model, **config)
         self.tools: dict[str, Tool] = {}
-        self.llm = LLM(model, **config)
 
     def register_tool(self, tool: Tool):
         """
@@ -308,63 +307,6 @@ class ToolLLM:
             'output': str(output)
         }
 
-    def _build_request_params(self, messages: list[Message], **overrides) -> dict:
-        """
-        Build parameters for the LiteLLM completion call.
-
-        Inherits from base LLM's parameter building logic.
-        """
-        # Same as base LLM
-        params = {
-            "model": self.config.model,
-            "messages": [msg.model_dump(exclude_none=True) for msg in messages],
-            "temperature": self.config.temperature,
-        }
-
-        # Add optional config parameters
-        if self.config.max_tokens:
-            params["max_tokens"] = self.config.max_tokens
-        if self.config.top_p != 1.0:
-            params["top_p"] = self.config.top_p
-        if self.config.frequency_penalty != 0.0:
-            params["frequency_penalty"] = self.config.frequency_penalty
-        if self.config.presence_penalty != 0.0:
-            params["presence_penalty"] = self.config.presence_penalty
-        if self.config.timeout:
-            params["timeout"] = self.config.timeout
-        if self.config.api_key:
-            params["api_key"] = self.config.api_key
-        if self.config.api_base:
-            params["api_base"] = self.config.api_base
-
-        # Apply overrides
-        params.update(overrides)
-
-        return params
-
-    def _parse_response(self, raw_response) -> LLMResponse:
-        """Parse raw LiteLLM response into standardized format."""
-        choice = raw_response.choices[0]
-        message = choice.message
-
-        # Extract usage information
-        usage = None
-        if hasattr(raw_response, 'usage'):
-            usage = {
-                "prompt_tokens": raw_response.usage.prompt_tokens,
-                "completion_tokens": raw_response.usage.completion_tokens,
-                "total_tokens": raw_response.usage.total_tokens
-            }
-
-        return LLMResponse(
-            content=getattr(message, 'content', None),
-            tool_calls=getattr(message, 'tool_calls', None),
-            finish_reason=choice.finish_reason,
-            model=raw_response.model,
-            usage=usage,
-            raw_response=raw_response
-        )
-
     def list_tools(self) -> list[str]:
         """Return names of all registered tools."""
         return list(self.tools.keys())
@@ -372,68 +314,3 @@ class ToolLLM:
     def get_tool(self, name: str) -> Optional[Tool]:
         """Get a registered tool by name."""
         return self.tools.get(name)
-
-
-class ConversationLLM(LLM):
-    """
-    Stateful LLM that maintains conversation history.
-
-    Extends the base LLM with conversation memory for multi-turn interactions.
-    """
-
-    def __init__(self, model: str, **config):
-        """Initialize with empty conversation history."""
-        super().__init__(model, **config)
-        self.history: list[Message] = []
-
-    def chat(
-            self,
-            message: str,
-            system: Optional[str] = None,
-            **kwargs
-    ) -> LLMResponse:
-        """
-        Send a message in the conversation context.
-
-        Args:
-            message: User's message to send
-            system: System prompt (only used if history is empty)
-            **kwargs: Override config parameters for this call
-
-        Returns:
-            LLMResponse containing the assistant's reply
-
-        Example:
-            chat = ConversationLLM("gpt-4")
-            response1 = chat.chat("What's the capital of France?")
-            response2 = chat.chat("What's its population?")  # Remembers context
-        """
-        # Add system message if this is the start of conversation
-        if system and not self.history:
-            self.history.append(Message(role=LLMRole.SYSTEM, content=system))
-
-        # Add user message to history
-        self.history.append(Message(role=LLMRole.USER, content=message))
-
-        # Get completion using full history
-        response = self.complete(self.history, **kwargs)
-
-        # Add assistant's response to history
-        if response.content:
-            self.history.append(
-                Message(
-                    role=LLMRole.ASSISTANT,
-                    content=response.content,
-                    tool_calls=response.tool_calls if response.tool_calls else None
-                )
-            )
-
-        return response
-
-    def reset(self):
-        """Clear the conversation history."""
-        self.history.clear()
-
-    def get_history(self) -> list[Message]:
-        """Return a copy of the conversation history."""
-        return list(self.history)
