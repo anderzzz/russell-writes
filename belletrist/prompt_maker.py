@@ -7,7 +7,7 @@ Uses Pydantic models for type-safe, validated prompt construction.
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
-from models.prompt_models import BasePromptConfig
+from belletrist.models.prompt_models import BasePromptConfig
 
 
 PROMPTS_PATH = (Path(__file__).parent.parent / "prompts").resolve()
@@ -50,7 +50,7 @@ class PromptMaker:
 
 
 if __name__ == "__main__":
-    from models.prompt_models import (
+    from belletrist.models.prompt_models import (
         PreambleTextConfig,
         SyntacticianConfig,
         BasicPromptConfig,
