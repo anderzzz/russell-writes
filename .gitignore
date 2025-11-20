@@ -1,0 +1,62 @@
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS-specific
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+
+# Database files (if using SQLite for dev)
+*.db
+*.sqlite
+*.sqlite3
+
+# Results/output directories (uncomment if needed)
+# results/
+# output/
