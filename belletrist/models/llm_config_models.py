@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Any
 
 
 class LLMRole(str, Enum):
@@ -35,12 +36,14 @@ class Message(BaseModel):
 
 class LLMResponse(BaseModel):
     """Standardized response from any LLM call."""
+    model_config = {"arbitrary_types_allowed": True}
+
     content: str | None = None
     tool_calls: list[dict] | None = None
     finish_reason: str | None = None
     model: str | None = None
     usage: dict | None = None
-    raw_response: dict | None = None
+    raw_response: Any = None
 
     @property
     def has_tool_calls(self) -> bool:

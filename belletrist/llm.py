@@ -332,3 +332,66 @@ class ToolLLM(LLM):
     def get_tool(self, name: str) -> Optional[Tool]:
         """Get a registered tool by name."""
         return self.tools.get(name)
+
+
+if __name__ == '__main__':
+    """
+    Basic functionality tests for LLM and ToolLLM classes.
+
+    Set the appropriate API key in your environment before running:
+    - For OpenAI: export OPENAI_API_KEY="your-key"
+    - For Mistral: export MISTRAL_API_KEY="your-key"
+    - etc.
+    """
+    import os
+    from belletrist import WordCountTool
+
+    print("=" * 60)
+    print("LLM BASIC FUNCTIONALITY TEST")
+    print("=" * 60)
+
+    # ========================================
+    # Test 1: Basic LLM completion
+    # ========================================
+    print("\n[Test 1] Basic LLM Completion")
+    print("-" * 60)
+
+    try:
+        # Use a small, fast model for testing
+        # Adjust the model and API key env var as needed
+        test_model = "mistral/mistral-small-latest"
+        api_key_env = "MISTRAL_API_KEY"
+
+        api_key = os.environ.get(api_key_env)
+        if not api_key:
+            print(f"⚠️  {api_key_env} not found in environment")
+            print(f"   Set it with: export {api_key_env}='your-key'")
+        else:
+            print(f"✓ Using model: {test_model}")
+
+            # Create LLM instance
+            llm = LLM(LLMConfig(
+                model=test_model,
+                api_key=api_key,
+                temperature=0.7,
+                max_tokens=100
+            ))
+
+            # Test simple completion
+            prompt = "What is a disk harrow machine? Answer in one sentence."
+            print(f"Prompt: {prompt}")
+
+            response = llm.complete(prompt)
+
+            print(f"\nResponse:")
+            print(f"  Content: {response.content}")
+            print(f"  Model: {response.model}")
+            print(f"  Finish reason: {response.finish_reason}")
+            if response.usage:
+                print(f"  Tokens: {response.usage['total_tokens']} total "
+                      f"({response.usage['prompt_tokens']} prompt + "
+                      f"{response.usage['completion_tokens']} completion)")
+            print("✓ Basic completion successful")
+
+    except Exception as e:
+        print(f"✗ Test 1 failed: {e}")
