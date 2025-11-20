@@ -5,24 +5,10 @@ Uses SQLite with two tables:
 - samples: Original text with provenance (file/paragraph indices)
 - analyses: Analyst outputs keyed by (sample_id, analyst_type)
 """
-from dataclasses import dataclass
 from typing import Optional
 import sqlite3
 from pathlib import Path
-from datetime import datetime
 import json
-
-
-@dataclass
-class Sample:
-    """A text sample with full provenance information."""
-    sample_id: str
-    text: str
-    file_index: Optional[int] = None
-    paragraph_start: Optional[int] = None
-    paragraph_end: Optional[int] = None
-    timestamp: Optional[str] = None
-    metadata: Optional[dict] = None
 
 
 class ResultStore:
@@ -33,17 +19,21 @@ class ResultStore:
     - analyses: Analyst outputs for each sample
 
     Example:
-        store = ResultStore(Path("results/analyses.db"))
+        from belletrist import DataSampler, ResultStore
 
-        # Save a sample
-        store.save_sample("sample_001", text="...", file_index=0,
-                         paragraph_start=10, paragraph_end=20)
+        sampler = DataSampler()
+        store = ResultStore(Path("results.db"))
+
+        # Save a text segment with automatic provenance
+        segment = sampler.sample_segment(10)
+        store.save_segment("sample_001", segment)
 
         # Save analyses
         store.save_analysis("sample_001", "rhetorician", output="...", model="gpt-4")
 
-        # Retrieve everything
+        # Retrieve everything (returns dicts)
         sample, analyses = store.get_sample_with_analyses("sample_001")
+        print(sample['text'])  # Access via dict keys
     """
 
     def __init__(self, filepath: Path):
@@ -65,9 +55,7 @@ class ResultStore:
                 text TEXT NOT NULL,
                 file_index INTEGER,
                 paragraph_start INTEGER,
-                paragraph_end INTEGER,
-                timestamp TEXT,
-                metadata TEXT
+                paragraph_end INTEGER
             )
         """)
         self.conn.execute("""
@@ -76,7 +64,6 @@ class ResultStore:
                 analyst TEXT,
                 output TEXT,
                 model TEXT,
-                timestamp TEXT,
                 PRIMARY KEY (sample_id, analyst),
                 FOREIGN KEY (sample_id) REFERENCES samples(sample_id)
             )
@@ -90,7 +77,6 @@ class ResultStore:
         file_index: Optional[int] = None,
         paragraph_start: Optional[int] = None,
         paragraph_end: Optional[int] = None,
-        metadata: Optional[dict] = None
     ):
         """Store a text sample with provenance information.
 
@@ -100,19 +86,16 @@ class ResultStore:
             file_index: Index of source file in DataSampler
             paragraph_start: Starting paragraph index (for slice)
             paragraph_end: Ending paragraph index (for slice)
-            metadata: Optional additional metadata as dict
         """
         self.conn.execute("""
             INSERT OR REPLACE INTO samples
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?)
         """, (
             sample_id,
             text,
             file_index,
             paragraph_start,
             paragraph_end,
-            datetime.now().isoformat(),
-            json.dumps(metadata) if metadata else None
         ))
         self.conn.commit()
 
@@ -142,42 +125,63 @@ class ResultStore:
 
         self.conn.execute("""
             INSERT OR REPLACE INTO analyses
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?)
         """, (
             sample_id,
             analyst,
             output,
-            model,
-            datetime.now().isoformat()
+            model
         ))
         self.conn.commit()
 
-    def get_sample(self, sample_id: str) -> Optional[Sample]:
+    def save_segment(
+        self,
+        sample_id: str,
+        segment: 'TextSegment',
+    ):
+        """Save a TextSegment directly to the store.
+
+        Convenience method that extracts all fields from a TextSegment
+        from the DataSampler.
+
+        Args:
+            sample_id: Unique identifier for this sample
+            segment: TextSegment object from DataSampler
+
+        """
+        self.save_sample(
+            sample_id=sample_id,
+            text=segment.text,
+            file_index=segment.file_index,
+            paragraph_start=segment.paragraph_start,
+            paragraph_end=segment.paragraph_end,
+        )
+
+    def get_sample(self, sample_id: str) -> Optional[dict]:
         """Retrieve a text sample by ID.
 
         Args:
             sample_id: Sample identifier
 
         Returns:
-            Sample object or None if not found
+            Dictionary with sample data or None if not found.
+            Keys: sample_id, text, file_index, paragraph_start, paragraph_end
         """
         row = self.conn.execute(
-            "SELECT * FROM samples WHERE sample_id=?",
+            "SELECT sample_id, text, file_index, paragraph_start, paragraph_end FROM samples WHERE sample_id=?",
             (sample_id,)
         ).fetchone()
 
         if not row:
             return None
 
-        return Sample(
-            sample_id=row['sample_id'],
-            text=row['text'],
-            file_index=row['file_index'],
-            paragraph_start=row['paragraph_start'],
-            paragraph_end=row['paragraph_end'],
-            timestamp=row['timestamp'],
-            metadata=json.loads(row['metadata']) if row['metadata'] else None
-        )
+        return {
+            'sample_id': row['sample_id'],
+            'text': row['text'],
+            'file_index': row['file_index'],
+            'paragraph_start': row['paragraph_start'],
+            'paragraph_end': row['paragraph_end'],
+        }
 
     def get_analysis(self, sample_id: str, analyst: str) -> Optional[str]:
         """Get one specific analysis output.
@@ -213,14 +217,14 @@ class ResultStore:
     def get_sample_with_analyses(
         self,
         sample_id: str
-    ) -> tuple[Sample, dict[str, str]]:
+    ) -> tuple[dict, dict[str, str]]:
         """Get both sample and all its analyses in one call.
 
         Args:
             sample_id: Sample identifier
 
         Returns:
-            Tuple of (Sample object, dict of analyst outputs)
+            Tuple of (sample dict, dict of analyst outputs)
 
         Raises:
             ValueError: If sample not found
@@ -232,13 +236,13 @@ class ResultStore:
         return sample, analyses
 
     def list_samples(self) -> list[str]:
-        """Get all sample IDs in chronological order.
+        """Get all sample IDs in insertion order.
 
         Returns:
             List of sample IDs, oldest first
         """
         rows = self.conn.execute(
-            "SELECT sample_id FROM samples ORDER BY timestamp"
+            "SELECT sample_id FROM samples ORDER BY rowid"
         ).fetchall()
         return [row['sample_id'] for row in rows]
 
