@@ -8,8 +8,7 @@ from typing import Optional, Union
 import json
 import litellm
 
-from models.llm_config_models import LLMConfig, Message, LLMRole, LLMResponse
-from tools import Tool
+from belletrist import LLMConfig, Message, LLMRole, LLMResponse, Tool
 
 
 class LLM:
