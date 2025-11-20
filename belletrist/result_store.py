@@ -263,6 +263,21 @@ class ResultStore:
         analyses = self.get_all_analyses(sample_id)
         return all(analyst in analyses for analyst in required_analysts)
 
+    def reset(self):
+        """Clear all data from the store, removing all samples and analyses.
+
+        This performs a complete cleanse of the database, deleting all records
+        from both the samples and analyses tables. The schema/table structure
+        is preserved, so you can immediately start storing new data.
+
+        Warning:
+            This operation is irreversible. All stored samples and analyses
+            will be permanently deleted.
+        """
+        self.conn.execute("DELETE FROM analyses")
+        self.conn.execute("DELETE FROM samples")
+        self.conn.commit()
+
     def close(self):
         """Close database connection."""
         self.conn.close()
