@@ -5,7 +5,7 @@ Each model corresponds to a Jinja template in the prompts/ directory,
 providing type-safe validation and clear documentation of required variables.
 """
 from abc import ABC, abstractmethod
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # =============================================================================
@@ -33,7 +33,18 @@ class SpecialistAnalystConfig(BasePromptConfig, ABC):
     All specialist analysts have 4 optional boolean sections that can be
     enabled/disabled. By default, all sections are enabled.
     """
-    pass
+
+    @classmethod
+    @abstractmethod
+    def description(cls) -> str:
+        """Return a brief description of this analyst's focus area."""
+        pass
+
+    @classmethod
+    @abstractmethod
+    def display_name(cls) -> str:
+        """Return the formatted display name for this analyst."""
+        pass
 
 
 # =============================================================================
@@ -122,6 +133,14 @@ class SyntacticianConfig(SpecialistAnalystConfig):
     def template_name(cls) -> str:
         return "syntactician"
 
+    @classmethod
+    def description(cls) -> str:
+        return "Sentence structure, clause architecture, grammatical patterns"
+
+    @classmethod
+    def display_name(cls) -> str:
+        return "Syntactician"
+
 
 class LexicologistConfig(SpecialistAnalystConfig):
     """Configuration for lexicologist.jinja - vocabulary and diction analysis."""
@@ -146,6 +165,14 @@ class LexicologistConfig(SpecialistAnalystConfig):
     @classmethod
     def template_name(cls) -> str:
         return "lexicologist"
+
+    @classmethod
+    def description(cls) -> str:
+        return "Word choice, register, etymology, semantic fields"
+
+    @classmethod
+    def display_name(cls) -> str:
+        return "Lexicologist"
 
 
 class InformationArchitectConfig(SpecialistAnalystConfig):
@@ -172,6 +199,14 @@ class InformationArchitectConfig(SpecialistAnalystConfig):
     def template_name(cls) -> str:
         return "information_architect"
 
+    @classmethod
+    def description(cls) -> str:
+        return "Logical flow, coherence, information structure"
+
+    @classmethod
+    def display_name(cls) -> str:
+        return "Information Architect"
+
 
 class RhetoricianConfig(SpecialistAnalystConfig):
     """Configuration for rhetorician.jinja - rhetorical strategy analysis."""
@@ -196,6 +231,14 @@ class RhetoricianConfig(SpecialistAnalystConfig):
     @classmethod
     def template_name(cls) -> str:
         return "rhetorician"
+
+    @classmethod
+    def description(cls) -> str:
+        return "Persuasive strategy, tone, reader positioning"
+
+    @classmethod
+    def display_name(cls) -> str:
+        return "Rhetorician"
 
 
 class EfficiencyAuditorConfig(SpecialistAnalystConfig):
@@ -222,6 +265,14 @@ class EfficiencyAuditorConfig(SpecialistAnalystConfig):
     def template_name(cls) -> str:
         return "efficiency_auditor"
 
+    @classmethod
+    def description(cls) -> str:
+        return "Economy, necessity, compression"
+
+    @classmethod
+    def display_name(cls) -> str:
+        return "Efficiency Auditor"
+
 
 # =============================================================================
 # Integration & Synthesis Models
@@ -232,7 +283,16 @@ class PatternRecognizerTextConfig(BasePromptConfig):
     Configuration for pattern_recognizer_text.jinja - cross-perspective integration.
 
     This template integrates multiple specialist analyses of a single text
-    to identify unified patterns.
+    to identify unified patterns. Requires at least 2 analysts.
+
+    The analysts dict should have structure:
+    {
+        'analyst_key': {
+            'analysis': 'The full analysis text from this analyst',
+            'analyst_descr_short': 'Brief description of analyst focus'
+        },
+        ...
+    }
     """
 
     original_text: str = Field(
@@ -240,11 +300,32 @@ class PatternRecognizerTextConfig(BasePromptConfig):
         min_length=1,
         description="The original text being analyzed"
     )
-    specialist_analyses: str = Field(
+    analysts: dict[str, dict[str, str]] = Field(
         ...,
-        min_length=1,
-        description="Combined output from all 6 specialist analyses"
+        description="Dictionary mapping analyst keys to their analysis and description"
     )
+
+    @field_validator('analysts')
+    @classmethod
+    def validate_analysts(cls, v: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
+        """Validate that at least 2 analysts are provided with required keys."""
+        if len(v) < 2:
+            raise ValueError("At least 2 analysts are required for cross-perspective integration")
+
+        required_keys = {'analysis', 'analyst_descr_short'}
+        for analyst_key, analyst_data in v.items():
+            missing_keys = required_keys - set(analyst_data.keys())
+            if missing_keys:
+                raise ValueError(
+                    f"Analyst '{analyst_key}' missing required keys: {missing_keys}. "
+                    f"Each analyst must have 'analysis' and 'analyst_descr_short'."
+                )
+            if not analyst_data['analysis'].strip():
+                raise ValueError(f"Analyst '{analyst_key}' has empty analysis")
+            if not analyst_data['analyst_descr_short'].strip():
+                raise ValueError(f"Analyst '{analyst_key}' has empty description")
+
+        return v
 
     @classmethod
     def template_name(cls) -> str:
