@@ -331,25 +331,48 @@ class PatternRecognizerTextConfig(BasePromptConfig):
     def template_name(cls) -> str:
         return "pattern_recognizer_text"
 
+    @classmethod
+    def analyst_name(cls) -> str:
+        """Return the analyst identifier for storing results in ResultStore."""
+        return "pattern_recognizer"
+
 
 class PatternRecognizerCrossAnalystConfig(BasePromptConfig):
     """
     Configuration for pattern_recognizer_cross_analyst.jinja - cross-text synthesis.
 
     This template synthesizes patterns across multiple text analyses
-    to extract generalizable principles.
+    to extract generalizable principles. Requires at least 2 integrated analyses.
+
+    The integrated_analyses dict should map sample IDs to their pattern
+    recognition outputs:
+    {
+        'sample_001': 'The integrated analysis for sample 001...',
+        'sample_002': 'The integrated analysis for sample 002...',
+        ...
+    }
     """
 
-    text_count: int = Field(
+    integrated_analyses: dict[str, str] = Field(
         ...,
-        ge=1,
-        description="Number of texts analyzed"
+        description="Mapping of sample IDs to their cross-perspective integration analyses"
     )
-    integrated_analyses: str = Field(
-        ...,
-        min_length=1,
-        description="Combined pattern recognition analyses from all texts"
-    )
+
+    @field_validator('integrated_analyses')
+    @classmethod
+    def validate_integrated_analyses(cls, v: dict[str, str]) -> dict[str, str]:
+        """Validate that at least 2 integrated analyses are provided."""
+        if len(v) < 2:
+            raise ValueError(
+                "At least 2 integrated analyses are required for cross-text synthesis. "
+                f"Got {len(v)}."
+            )
+
+        for sample_id, analysis in v.items():
+            if not analysis.strip():
+                raise ValueError(f"Integrated analysis for '{sample_id}' is empty")
+
+        return v
 
     @classmethod
     def template_name(cls) -> str:

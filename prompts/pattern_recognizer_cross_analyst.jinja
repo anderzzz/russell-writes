@@ -1,8 +1,8 @@
 INSTRUCTION SET: CROSS-TEXT SYNTHESIS
 
-You have analyzed multiple prose passages. For each passage, you performed a cross-perspective integration, identifying how six different analytical lenses (syntax, lexicon, sound, information flow, rhetoric, economy) interact to create the text's effects.
+You have analyzed multiple prose passages. For each passage, you performed a cross-perspective integration, identifying how different analytical lenses interact to create the text's effects.
 
-You now have [N] integrated analyses, one per text passage.
+You now have {{ integrated_analyses|length }} integrated analyses, one per text passage.
 
 Your task is to synthesize these analyses to extract:
 1. Recurring patterns across texts
@@ -149,4 +149,11 @@ Your output should provide a data-driven foundation for the final Synthesist to 
 
 **INTEGRATED TEXT ANALYSES:**
 
-[Include all N cross-perspective integrations from Stage 1]
+{% for sample_id, integration in integrated_analyses.items() %}
+---
+
+### Sample: {{ sample_id }}
+
+{{ integration }}
+
+{% endfor %}
