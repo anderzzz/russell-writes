@@ -278,9 +278,9 @@ class EfficiencyAuditorConfig(SpecialistAnalystConfig):
 # Integration & Synthesis Models
 # =============================================================================
 
-class PatternRecognizerTextConfig(BasePromptConfig):
+class CrossPerspectiveIntegratorConfig(BasePromptConfig):
     """
-    Configuration for pattern_recognizer_text.jinja - cross-perspective integration.
+    Configuration for cross_perspective_integrator.jinja - cross-perspective integration.
 
     This template integrates multiple specialist analyses of a single text
     to identify unified patterns. Requires at least 2 analysts.
@@ -329,23 +329,23 @@ class PatternRecognizerTextConfig(BasePromptConfig):
 
     @classmethod
     def template_name(cls) -> str:
-        return "pattern_recognizer_text"
+        return "cross_perspective_integrator"
 
     @classmethod
     def analyst_name(cls) -> str:
         """Return the analyst identifier for storing results in ResultStore."""
-        return "pattern_recognizer"
+        return "cross_perspective_integrator"
 
 
-class PatternRecognizerCrossAnalystConfig(BasePromptConfig):
+class CrossTextSynthesizerConfig(BasePromptConfig):
     """
-    Configuration for pattern_recognizer_cross_analyst.jinja - cross-text synthesis.
+    Configuration for cross_text_synthesizer.jinja - cross-text synthesis.
 
     This template synthesizes patterns across multiple text analyses
     to extract generalizable principles. Requires at least 2 integrated analyses.
 
-    The integrated_analyses dict should map sample IDs to their pattern
-    recognition outputs:
+    The integrated_analyses dict should map sample IDs to their cross-perspective
+    integration outputs:
     {
         'sample_001': 'The integrated analysis for sample 001...',
         'sample_002': 'The integrated analysis for sample 002...',
@@ -376,7 +376,7 @@ class PatternRecognizerCrossAnalystConfig(BasePromptConfig):
 
     @classmethod
     def template_name(cls) -> str:
-        return "pattern_recognizer_cross_analyst"
+        return "cross_text_synthesizer"
 
 
 class SynthesizerOfPrinciplesConfig(BasePromptConfig):

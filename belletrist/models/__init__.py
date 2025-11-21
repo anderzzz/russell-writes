@@ -17,8 +17,8 @@ from belletrist.models.prompt_models import (
     EfficiencyAuditorConfig,
 
     # Integration & synthesis
-    PatternRecognizerTextConfig,
-    PatternRecognizerCrossAnalystConfig,
+    CrossPerspectiveIntegratorConfig,
+    CrossTextSynthesizerConfig,
     SynthesizerOfPrinciplesConfig,
 )
 
@@ -37,6 +37,6 @@ __all__ = [
     "RhetoricianConfig", "EfficiencyAuditorConfig",
 
     # Synthesis
-    "PatternRecognizerTextConfig", "PatternRecognizerCrossAnalystConfig",
+    "CrossPerspectiveIntegratorConfig", "CrossTextSynthesizerConfig",
     "SynthesizerOfPrinciplesConfig",
 ]
