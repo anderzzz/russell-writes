@@ -1,0 +1,22 @@
+You are given a content summary that captures the core ideas and arguments of a text, but stripped of stylistic elements.
+
+Your task is to expand this summary into a complete prose passage, following the writing style demonstrated in the example texts below.
+
+**EXAMPLE TEXTS (demonstrating the target style):**
+
+{% for example in few_shot_examples %}
+---
+
+{{ example }}
+
+{% endfor %}
+
+---
+
+Now, using a similar writing style, expand the following content summary into a full prose passage:
+
+**CONTENT SUMMARY:**
+
+{{ content_summary }}
+
+**YOUR EXPANDED TEXT:**

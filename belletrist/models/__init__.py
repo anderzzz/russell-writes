@@ -1,4 +1,4 @@
-from belletrist.models.llm_config_models import LLMConfig, Message, LLMRole, LLMResponse
+from belletrist.models.llm_config_models import LLMConfig, Message, LLMRole, LLMResponse, StyleJudgment
 from belletrist.models.prompt_models import (
     # Base classes
     BasePromptConfig,
@@ -20,11 +20,19 @@ from belletrist.models.prompt_models import (
     CrossPerspectiveIntegratorConfig,
     CrossTextSynthesizerConfig,
     SynthesizerOfPrinciplesConfig,
+
+    # Style evaluation
+    StyleFlatteningConfig,
+    StyleReconstructionGenericConfig,
+    StyleReconstructionFewShotConfig,
+    StyleReconstructionAuthorConfig,
+    StyleReconstructionInstructionsConfig,
+    StyleJudgeConfig,
 )
 
 __all__ = [
     # LLM core
-    "LLMConfig", "Message", "LLMRole", "LLMResponse",
+    "LLMConfig", "Message", "LLMRole", "LLMResponse", "StyleJudgment",
 
     # Base classes
     "BasePromptConfig", "SpecialistAnalystConfig",
@@ -39,4 +47,9 @@ __all__ = [
     # Synthesis
     "CrossPerspectiveIntegratorConfig", "CrossTextSynthesizerConfig",
     "SynthesizerOfPrinciplesConfig",
+
+    # Style evaluation
+    "StyleFlatteningConfig", "StyleReconstructionGenericConfig",
+    "StyleReconstructionFewShotConfig", "StyleReconstructionAuthorConfig",
+    "StyleReconstructionInstructionsConfig", "StyleJudgeConfig",
 ]

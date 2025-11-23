@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 
 class LLMRole(str, Enum):
@@ -62,4 +62,35 @@ class LLMConfig(BaseModel):
     timeout: int | None = Field(default=None, gt=0)
     api_key: str
     api_base: str | None = Field(default=None)
+    response_format: dict | None = Field(
+        default=None,
+        description="Structured output format. Use {'type': 'json_object'} for JSON mode."
+    )
     extra_params: dict = Field(default_factory=dict)
+
+
+# =============================================================================
+# Structured Output Models
+# =============================================================================
+
+class StyleJudgment(BaseModel):
+    """
+    Structured output format for style similarity judgments.
+
+    Used by the style judge to compare a reconstruction against the original
+    gold standard text.
+    """
+
+    ranking: Literal["original_better", "reconstruction_better", "roughly_equal"] = Field(
+        ...,
+        description="Which text better matches the gold standard style"
+    )
+    confidence: Literal["high", "medium", "low"] = Field(
+        ...,
+        description="Judge's confidence level in the ranking"
+    )
+    reasoning: str = Field(
+        ...,
+        min_length=10,
+        description="Chain-of-thought explanation for the ranking decision"
+    )

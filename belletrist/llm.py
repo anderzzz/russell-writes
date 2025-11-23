@@ -82,6 +82,33 @@ class LLM:
         # Parse and return the response
         return self._parse_response(raw_response)
 
+    def complete_json(
+            self,
+            prompt: Union[str, list[Message]],
+            system: Optional[str] = None,
+            **kwargs
+    ) -> LLMResponse:
+        """
+        Execute a completion with JSON mode enabled.
+
+        Convenience method that sets response_format={'type': 'json_object'}
+        to request structured JSON output from the model.
+
+        Args:
+            prompt: Either a string (converted to user message) or list of Messages
+            system: Optional system prompt to prepend
+            **kwargs: Override config parameters for this call
+
+        Returns:
+            LLMResponse containing JSON content
+
+        Example:
+            llm = LLM("gpt-4")
+            response = llm.complete_json("Return user info as JSON: name=John, age=30")
+            data = json.loads(response.content)
+        """
+        return self.complete(prompt, system, response_format={"type": "json_object"}, **kwargs)
+
     def _build_request_params(self, messages: list[Message], **overrides) -> dict:
         """
         Build parameters for the LiteLLM completion call.
@@ -115,6 +142,8 @@ class LLM:
             params["api_key"] = self.config.api_key
         if self.config.api_base:
             params["api_base"] = self.config.api_base
+        if self.config.response_format:
+            params["response_format"] = self.config.response_format
 
         # Apply any overrides for this specific call
         params.update(overrides)

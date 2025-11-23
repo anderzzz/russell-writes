@@ -396,3 +396,138 @@ class SynthesizerOfPrinciplesConfig(BasePromptConfig):
     @classmethod
     def template_name(cls) -> str:
         return "synthesizer_of_principles"
+
+
+# =============================================================================
+# Style Evaluation Models
+# =============================================================================
+
+class StyleFlatteningConfig(BasePromptConfig):
+    """
+    Configuration for style_flattening.jinja - content extraction.
+
+    Extracts semantic and argumentative content from text while removing
+    all stylistic elements, creating a style-neutral summary suitable for
+    reconstruction experiments.
+    """
+
+    text: str = Field(
+        ...,
+        min_length=1,
+        description="The text to extract content from"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_flattening"
+
+
+class StyleReconstructionGenericConfig(BasePromptConfig):
+    """
+    Configuration for style_reconstruction_generic.jinja - baseline reconstruction.
+
+    Generic baseline: expands content with standard "write clearly" instructions.
+    """
+
+    content_summary: str = Field(
+        ...,
+        min_length=1,
+        description="Style-flattened content summary to expand"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_reconstruction_generic"
+
+
+class StyleReconstructionFewShotConfig(BasePromptConfig):
+    """
+    Configuration for style_reconstruction_fewshot.jinja - few-shot learning.
+
+    Provides example texts to guide style reconstruction through implicit learning.
+    """
+
+    content_summary: str = Field(
+        ...,
+        min_length=1,
+        description="Style-flattened content summary to expand"
+    )
+    few_shot_examples: list[str] = Field(
+        ...,
+        min_length=2,
+        description="2-3 example texts demonstrating the target style"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_reconstruction_fewshot"
+
+
+class StyleReconstructionAuthorConfig(BasePromptConfig):
+    """
+    Configuration for style_reconstruction_author.jinja - author name prompting.
+
+    Leverages model's implicit knowledge of author style through name prompting.
+    """
+
+    content_summary: str = Field(
+        ...,
+        min_length=1,
+        description="Style-flattened content summary to expand"
+    )
+    author_name: str = Field(
+        ...,
+        min_length=1,
+        description="Name of author whose style to emulate"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_reconstruction_author"
+
+
+class StyleReconstructionInstructionsConfig(BasePromptConfig):
+    """
+    Configuration for style_reconstruction_instructions.jinja - derived instructions.
+
+    Applies explicitly derived style instructions from the synthesis pipeline.
+    """
+
+    content_summary: str = Field(
+        ...,
+        min_length=1,
+        description="Style-flattened content summary to expand"
+    )
+    style_instructions: str = Field(
+        ...,
+        min_length=1,
+        description="Derived style principles from SynthesizerOfPrinciplesConfig"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_reconstruction_instructions"
+
+
+class StyleJudgeConfig(BasePromptConfig):
+    """
+    Configuration for style_judge.jinja - style similarity judgment.
+
+    Compares a reconstruction against the original gold standard, outputting
+    structured judgment in StyleJudgment format.
+    """
+
+    original_text: str = Field(
+        ...,
+        min_length=1,
+        description="The gold standard text"
+    )
+    reconstruction_text: str = Field(
+        ...,
+        min_length=1,
+        description="The reconstructed text to compare"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_judge"

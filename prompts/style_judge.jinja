@@ -1,0 +1,40 @@
+You will evaluate two texts: an ORIGINAL (gold standard) and a RECONSTRUCTION.
+
+Your task: Determine which text better captures the writing style - is the reconstruction stylistically similar to the original, or does the original remain distinctively better?
+
+**Consider these aspects of style:**
+- **Rhythm and flow**: How sentences move, their length variation, internal cadences
+- **Vocabulary choices**: Level of formality, precision, whether words feel deliberate or natural
+- **Structural moves**: How ideas connect, use of transitions, paragraph organization
+- **Voice and tone**: The implicit relationship between writer and reader
+- **Clarity patterns**: Whether complexity comes from ideas or from prose
+
+**Process:**
+1. Read the ORIGINAL carefully and note what makes its prose distinctive
+2. Read the RECONSTRUCTION
+3. For the reconstruction, identify specific moments where it does/doesn't echo the ORIGINAL's style
+4. Make your judgment based on overall stylistic alignment, not content accuracy
+
+**ORIGINAL TEXT:**
+
+{{ original_text }}
+
+---
+
+**RECONSTRUCTION:**
+
+{{ reconstruction_text }}
+
+---
+
+**Your judgment must be returned as JSON with exactly these fields:**
+
+```json
+{
+  "ranking": "original_better" | "reconstruction_better" | "roughly_equal",
+  "confidence": "high" | "medium" | "low",
+  "reasoning": "Your detailed chain-of-thought explanation here"
+}
+```
+
+Think step by step about the stylistic features, then provide your structured judgment.
