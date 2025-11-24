@@ -7,9 +7,6 @@ from dataclasses import dataclass
 import random
 
 
-RAW_DATA_PATH = (Path(__file__).parent.parent / "data" / "russell").resolve()
-
-
 @dataclass
 class TextSegment:
     """A segment of text with complete provenance information.
@@ -79,12 +76,14 @@ def load_paragraphs(
 class DataSampler:
     """Sample paragraphs from text files in the data directory.
 
-    Loads all .txt files from RAW_DATA_PATH and provides methods
-    to retrieve paragraphs by index, chunks, or random sampling.
-    """
+    Args:
+        data_path: Path to the data directory.
 
-    def __init__(self):
-        self.fps = tuple(RAW_DATA_PATH.glob("*.txt"))
+    """
+    def __init__(self, data_path: Union[str, Path]):
+        if isinstance(data_path, str):
+            data_path = Path(data_path)
+        self.fps = tuple(data_path.glob("*.txt"))
         self.n_paragraphs = {
             fp.name : len(load_paragraphs(fp)) for fp in self.fps
         }
@@ -225,7 +224,7 @@ class DataSampler:
 
 
 if __name__ == "__main__":
-    sampler = DataSampler()
+    sampler = DataSampler('../data/russell')
     segment = sampler.sample_segment(10)
     print(f"Sampled from file {segment.file_index}: {segment.file_path.name}")
     print(f"Paragraphs {segment.paragraph_start}-{segment.paragraph_end}")
