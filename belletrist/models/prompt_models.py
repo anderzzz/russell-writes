@@ -378,6 +378,11 @@ class CrossTextSynthesizerConfig(BasePromptConfig):
     def template_name(cls) -> str:
         return "cross_text_synthesizer"
 
+    @classmethod
+    def synthesis_type(cls) -> str:
+        """Return the synthesis type identifier for storing in ResultStore."""
+        return "cross_text_synthesis"
+
 
 class SynthesizerOfPrinciplesConfig(BasePromptConfig):
     """
@@ -396,6 +401,11 @@ class SynthesizerOfPrinciplesConfig(BasePromptConfig):
     @classmethod
     def template_name(cls) -> str:
         return "synthesizer_of_principles"
+
+    @classmethod
+    def synthesis_type(cls) -> str:
+        """Return the synthesis type identifier for storing in ResultStore."""
+        return "principles_guide"
 
 
 # =============================================================================

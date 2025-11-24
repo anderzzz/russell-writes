@@ -77,10 +77,14 @@ Required environment variables:
 4. **Cross-Text Synthesis** (multi-sample):
    - `CrossTextSynthesizerConfig` takes multiple integration analyses
    - Extracts recurring patterns and hierarchies
-   - Output is standalone (not stored in ResultStore)
+   - Output stored in ResultStore as `cross_text_synthesis_NNN` with auto-generated ID
+   - Full provenance tracked: which samples + analysts contributed
 
 5. **Principles Synthesis**:
    - `SynthesizerOfPrinciplesConfig` converts patterns to prescriptive guide
+   - Output stored in ResultStore as `principles_guide_NNN` with parent linkage
+   - Inherits provenance from parent cross-text synthesis
+   - Can be exported to filesystem for consumption by style_evaluation.ipynb
 
 **Style Evaluation Pipeline (style_evaluation.ipynb):**
 
@@ -180,6 +184,110 @@ response = llm.complete_json(judge_prompt)
 judgment_data = json.loads(response.content)
 judgment = StyleJudgment(**judgment_data)  # Validates structure
 ```
+
+### 6. Synthesis Storage and Provenance
+
+Final synthesis outputs (Stages 2-3) are stored in ResultStore with auto-generated IDs and full provenance tracking:
+
+**Schema:**
+- `syntheses` table: Stores synthesis outputs with metadata
+- `synthesis_samples` table: Junction table linking syntheses to contributing samples/analyses
+- `synthesis_metadata` table: Pre-computed metadata for efficient queries
+
+**Auto-generated IDs:**
+```python
+# IDs follow pattern: {synthesis_type}_{counter:03d}
+# Examples: cross_text_synthesis_001, principles_guide_001
+```
+
+**Saving syntheses:**
+```python
+# Stage 2: Cross-text synthesis
+cross_text_id = store.save_synthesis(
+    synthesis_type='cross_text_synthesis',
+    output=response.content,
+    model=response.model,
+    sample_contributions=[(sample_id, 'cross_perspective_integrator') for sample_id in sample_ids],
+    config=cross_text_config  # Full Pydantic config stored as JSON
+)
+# Returns: 'cross_text_synthesis_001'
+
+# Stage 3: Principles guide (with parent linkage)
+principles_id = store.save_synthesis(
+    synthesis_type='principles_guide',
+    output=response.content,
+    model=response.model,
+    sample_contributions=[],  # Empty: inherits from parent
+    config=principles_config,
+    parent_synthesis_id=cross_text_id  # Links to parent
+)
+# Returns: 'principles_guide_001'
+```
+
+**Querying metadata:**
+```python
+# List all syntheses by type
+cross_text_ids = store.list_syntheses('cross_text_synthesis')
+principles_ids = store.list_syntheses('principles_guide')
+
+# Get synthesis with computed metadata
+synth = store.get_synthesis_with_metadata('cross_text_synthesis_001')
+# Returns: {
+#   'synthesis_id': 'cross_text_synthesis_001',
+#   'type': 'cross_text_synthesis',
+#   'output': '...',
+#   'model': 'mistral/mistral-large-2411',
+#   'created_at': '2025-11-24T10:30:00',
+#   'parent_id': None,
+#   'config': {...},
+#   'metadata': {
+#     'num_samples': 3,
+#     'sample_ids': ['sample_001', 'sample_002', 'sample_003'],
+#     'is_homogeneous_model': True,
+#     'models_used': ['mistral/mistral-large-2411']
+#   }
+# }
+
+# Get full provenance tree
+provenance = store.get_synthesis_provenance('principles_guide_001')
+# Returns recursive structure showing parent chain and sample contributions
+```
+
+**Exporting to filesystem:**
+```python
+# Export with YAML metadata header
+store.export_synthesis(
+    'principles_guide_001',
+    Path('outputs/style_instructions.txt'),
+    metadata_format='yaml'  # or 'json'
+)
+
+# Output format:
+# ---
+# synthesis_id: principles_guide_001
+# synthesis_type: principles_guide
+# model: mistral/mistral-large-2411
+# created_at: 2025-11-24T10:30:00
+# parent_synthesis_id: cross_text_synthesis_001
+# num_samples: 3
+# sample_ids:
+#   - sample_001
+#   - sample_002
+#   - sample_003
+# is_homogeneous_model: true
+# models_used:
+#   - mistral/mistral-large-2411
+# ---
+#
+# [synthesis output text]
+```
+
+**Design rationale:**
+- **Auto-generated IDs**: Prevents naming conflicts, ensures sequential versioning
+- **Parent linkage**: Principles guides inherit provenance from cross-text syntheses
+- **Config storage**: Full Pydantic configs stored as JSON for exact reproducibility
+- **Metadata caching**: Pre-computed metadata in separate table for fast queries
+- **Foreign keys**: Enforce referential integrity (can't link to non-existent analyses)
 
 ## Important Implementation Details
 
