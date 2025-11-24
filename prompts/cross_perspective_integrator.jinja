@@ -14,25 +14,74 @@ Your task is to integrate these perspectives into a unified understanding of how
 
 ---
 
-{% include 'cross_perspective_integrator_output_structure.jinja' %}
+## INPUT/OUTPUT SPECIFICATION
+
+**YOU RECEIVE:**
+- Original text passage
+- Raw observational analyses from {{ analysts|length }} specialists
+- Each analysis contains patterns, counts, and examples
+- Analysts didn't know their observations would become writing instruction
+
+**YOU MUST PRODUCE:**
+- Extracted techniques with mechanical specifications
+- Interaction patterns between techniques
+- Load-bearing features ranked by importance
+- The gestalt of the techniques working together
+- Example sentences from this text that demonstrate each technique
+- Confidence levels for each extraction
+
+**CRITICAL:** Your output feeds into cross-text synthesis. Preserve:
+- Exact mechanical details (word counts, positions, ratios)
+- Illustrative examples (actual sentences showing the technique)
+- Contextual triggers (when to use/not use)
+
+## OUTPUT STRUCTURE
+
+Organize your integration as follows:
+
+**I. Extracted Techniques** (5-10 mechanical specifications)
+   - Name: [memorable label]
+   - Specification: [exact mechanical description]
+   - Example from text: [quote showing technique]
+   - Source observations: [which analysts noted this]
+   - Confidence: [HIGH/MEDIUM/LOW + why]
+
+**II. Primary Interactions** (3-5 major cross-domain connections)
+   - Interaction: [Feature A × Feature B = Effect]
+   - Mechanism: [how they enable each other]
+   - Example: [quote showing interaction]
+
+**III. Resolved Tensions** (2-3 if present)
+   - Tension: [competing priorities]
+   - Resolution: [how text balances them]
+
+**IV. Load-Bearing Architecture** (3-5 ranked features)
+   1. [Most foundational]: [why] + [what depends on it]
+   2. [Second tier]: [why] + [dependencies]
+   etc.
+
+**V. Gestalt Effect** (1-2 paragraphs)
+   - The unified effect these techniques create together
+
+**VI. Extraction Confidence** (brief assessment)
+   - Which techniques are rock-solid vs. tentative
+   - What mechanical details are still needed
 
 ---
 
-{% include 'cross_perspective_integrator_guidelines.jinja' %}
-
----
-
-**TEXT PASSAGE:**
+**ORIGINAL TEXT PASSAGE:**
 
 {{ original_text }}
 
 ---
 
-**ANALYST REPORTS:**
+**RAW OBSERVATIONAL ANALYSES FROM SPECIALISTS:**
 
 {% for analyst_key, analyst_data in analysts.items() %}
 **{{ analyst_key|upper }}:**
 
 {{ analyst_data.analysis }}
+
+
 
 {% endfor %}

@@ -14,15 +14,43 @@ Your task is to synthesize these analyses to extract:
 
 ## ANALYTICAL FRAMEWORK
 
+### 0. TECHNIQUE CONSOLIDATION
+
+Before analyzing patterns, consolidate similar techniques that may be named differently:
+
+**Identify Same Technique, Different Names:**
+- Sample A: "Simple frames before complexity"
+- Sample B: "Anchoring sentences"
+- Sample C: "Conceptual staging"
+→ CONSOLIDATED: "Simple Anchor Technique" (opening complex ideas with 3-5 word frames)
+
+**For each consolidated technique:**
+- List all variations/names found
+- Extract the common mechanical specification
+- Preserve the best/most complete description
+- Collect ALL examples across texts (you'll need these for teaching)
+
+**Consolidation Principles:**
+- If mechanical specs match (word counts, positions, structures) = same technique
+- If effects are identical but mechanisms differ = related but distinct
+- When uncertain, keep separate but note potential relationship
+
 ### 1. STABLE PATTERNS
 
 Identify techniques and interactions that appear consistently across multiple texts:
 
 **For each stable pattern:**
 - Specify: In how many texts does this appear? (N/[total])
-- Describe: What is the pattern? (be precise)
-- Quote: Provide examples from at least 3 different text analyses
+- Describe: What is the pattern? (be precise with mechanical specs)
+- Collect examples: Gather 3-5 actual sentences/paragraphs that demonstrate this
+  - Choose varied examples that show the technique's range
+  - Include both simple and complex applications
+  - Preserve these verbatim for prescriptive use
 - Assess centrality: Is this foundational or secondary?
+- Mechanical specification: Consolidate all parameters
+  - Word counts, ratios, positions
+  - Decision rules (if X then Y)
+  - Construction sequence
 
 **Look for patterns in:**
 - Specific techniques (e.g., "always uses short opening sentences")
@@ -106,6 +134,25 @@ Identify what's consistently ABSENT or AVOIDED:
 
 **This reveals:** What makes these texts distinctive may be what they *don't* do.
 
+### 7. TEACHABILITY ASSESSMENT
+
+For each identified pattern/technique:
+
+**Rate Prescriptive Readiness:**
+- **READY**: Full mechanical specs + clear examples + decision rules
+- **NEARLY READY**: Has specs and examples but needs parameters refined
+- **NEEDS WORK**: Effect clear but mechanism needs specification
+
+**Missing Pieces Inventory:**
+- What specific parameters still need quantification?
+- Which decision rules need clarification?
+- What contextual triggers remain vague?
+
+**Example Collection Audit:**
+- Do we have 3+ varied examples for major techniques?
+- Are examples clear enough to serve as models?
+- Do examples cover the range of the technique's application?
+
 ---
 
 ## OUTPUT STRUCTURE
@@ -128,22 +175,49 @@ Organize your synthesis as follows:
 
 **VI. Negative Space** (what's notably absent)
 
-**VII. Provisional Principles** (toward a prescriptive framework)
-   - Based on the above, what preliminary "rules" emerge?
-   - These will be refined by the final Synthesist
+**VII. PROVISIONAL PRINCIPLES (toward a prescriptive framework)
+    - Transform your findings into proto-instructions:
+    - For each major pattern/technique:
+      1. Draft prescriptive statement: "To achieve X, do Y"
+         - Example: "To maintain clarity in complex arguments, place core claims in 8-12 word independent clauses"
+      2. Attach example set: 3-5 model sentences/paragraphs
+         - These should work as few-shot learning examples
+         - Show the technique clearly without explanation needed
+      3. Specify conditions: When to use/not use
+      4. Note dependencies: What must come before/after
+         - "Requires established credibility first"
+         - "Follow with supporting evidence"
 
 ---
 
+## INPUT/OUTPUT SPECIFICATION
+
+**YOU RECEIVE:**
+- {{ integrated_analyses|length }} integrated analyses from individual text passages
+- Each contains extracted techniques with mechanical specifications
+- Each includes concrete examples from its source text
+
+**YOU MUST PRODUCE:**
+- Consolidated technique inventory (with duplicates merged)
+- Pattern stability assessment (how universal vs. contextual)
+- Collected example bank (3-5 instances per major technique)
+- Hierarchical organization (foundational → tactical)
+- Proto-prescriptive principles (draft instructions with examples)
+
+**CRITICAL:** Your output becomes prescriptive guidance. Therefore:
+- Preserve ALL mechanical specifications (counts, ratios, positions)
+- Collect concrete examples, not descriptions of examples
+- Use memorable technique names that hint at function
+- Never reference "Sample X" - only quote actual text
+- Output should be ready for conversion to a teaching document
+
+
 ## CRITICAL GUIDELINES
-
-- **Distinguish frequency from importance**: Something might be rare but crucial
-- **Quote liberally**: Ground every claim in specific evidence from the analyses
-- **Maintain precision**: Don't blur distinctions in the pursuit of generality
-- **Note uncertainty**: If you're unsure whether a pattern is stable, say so
-- **Preserve complexity**: Don't oversimplify for the sake of clean categories
-- **Track your confidence**: Rate each pattern's robustness (high/medium/low confidence)
-
-Your output should provide a data-driven foundation for the final Synthesist to create actionable prescriptive principles. You are building the empirical base, not yet writing the style guide.
+- **Consolidate aggressively**: Same mechanism = same technique (even if named differently)
+- **Collect examples obsessively**: You need 3-5 good examples per technique for teaching
+- **Preserve specifications exactly**: "8-12 words" not "short"
+- **Think like a teacher**: What would someone need to replicate this?
+- **No sample references**: Only actual text examples that demonstrate techniques
 
 ---
 
