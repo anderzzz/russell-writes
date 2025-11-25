@@ -162,6 +162,10 @@ class ResultStore:
         self.filepath = filepath
         self.conn = sqlite3.connect(filepath)
         self.conn.row_factory = sqlite3.Row  # Dict-like row access
+
+        # Enable foreign key constraints (disabled by default in SQLite)
+        self.conn.execute("PRAGMA foreign_keys = ON")
+
         self._init_schema()
 
     def _init_schema(self):
