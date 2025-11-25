@@ -1,14 +1,138 @@
 """
-Result storage for text samples and multi-analyst outputs.
+Persistent storage for multi-stage LLM text analysis workflows.
 
-Uses SQLite with five tables:
-- samples: Original text with provenance (file/paragraph indices)
-- analyses: Analyst outputs keyed by (sample_id, analyst_type)
-- syntheses: Final synthesis outputs (cross-text synthesis, principles guide)
-- synthesis_samples: Junction table linking syntheses to their input samples
-- synthesis_metadata: Pre-computed metadata for efficient queries
+This module implements a tailored database schema for the specific workflow of
+analyzing text samples through multiple specialist LLM agents, integrating their
+findings, and synthesizing cross-text patterns. It is NOT a general-purpose LLM
+workflow memory system.
+
+## Design Philosophy
+
+The core problem: Running LLMs is expensive and time-consuming. When a multi-stage
+analysis pipeline involves:
+1. Sampling text → 2. Running 5+ specialist analyses per sample →
+3. Cross-perspective integration → 4. Cross-text synthesis → 5. Principles extraction
+
+...we need to cache intermediate results to enable:
+- Iterative development without re-running expensive LLM calls
+- Reproducibility through full provenance tracking
+- Partial re-runs (e.g., re-do synthesis without re-analyzing samples)
+- Validation that all required analyses completed before proceeding
+
+## Three-Tier Data Model
+
+The schema mirrors the workflow's natural hierarchy:
+
+**Tier 1: Samples** (base layer)
+- Original text segments with source provenance (file index, paragraph range)
+- Provenance enables exact reproducibility and source attribution
+- Example: "sample_001" = paragraphs 372-377 from file 1
+
+**Tier 2: Analyses** (per-sample, per-analyst)
+- Multiple specialist analyses per sample (rhetorician, syntactician, etc.)
+- Keyed by (sample_id, analyst_name) composite key
+- Each analysis stores: output text + model used
+- Foreign key constraint: analyses must reference existing samples
+
+**Tier 3: Syntheses** (multi-sample aggregations)
+- Cross-text synthesis: aggregates multiple per-sample integrations
+- Principles guide: converts synthesis into prescriptive style instructions
+- Auto-generated IDs prevent naming collisions (e.g., 'cross_text_synthesis_001')
+- Parent linkage: principles_guide references its parent cross_text_synthesis
+- Full provenance: tracks which samples/analyses contributed to each synthesis
+
+## Key Design Decisions
+
+**1. Auto-Generated Synthesis IDs**
+Unlike samples (user provides 'sample_001'), syntheses get auto-IDs to avoid
+naming conflicts when iterating. The pattern {type}_{counter:03d} ensures
+sequential versioning (cross_text_synthesis_001, _002, etc.).
+
+**2. Metadata Inheritance**
+Principles guides don't directly consume samples - they consume cross-text
+syntheses. Yet we want to know which samples ultimately contributed. Solution:
+- Store empty sample_contributions for principles guides in DB
+- Inherit parent's sample metadata when exporting to filesystem
+- Maintains clean relational model while providing useful exported metadata
+
+**3. Hierarchical Reset**
+Three reset scopes respect foreign key constraints:
+- 'all': Delete everything (clean slate)
+- 'analyses_and_syntheses': Keep samples, re-run analyses
+- 'syntheses_only': Keep samples + analyses, re-run syntheses
+Cannot delete upstream data while preserving downstream (would violate FKs).
+
+**4. Provenance as First-Class Concern**
+Every sample tracks exact source location. Every analysis tracks model used.
+Every synthesis tracks contributing samples/analyses + parent linkage.
+This enables full audit trails: "Which text produced this style principle?"
+
+## SQLite Schema (5 Tables)
+
+samples:          sample_id (PK) | text | file_index | paragraph_start | paragraph_end
+analyses:         sample_id (FK) | analyst (PK) | output | model
+syntheses:        synthesis_id (PK) | synthesis_type | output | model | created_at | parent_id (FK) | config_json
+synthesis_samples: synthesis_id (FK) | sample_id (FK) | analyst (FK)
+synthesis_metadata: synthesis_id (FK) | num_samples | sample_ids_json | is_homogeneous_model | models_json
+
+## Usage Pattern
+
+```python
+from belletrist import DataSampler, ResultStore
+
+sampler = DataSampler()
+store = ResultStore(Path("results.db"))
+
+# Stage 1: Sample text
+segment = sampler.sample_segment(5)
+store.save_segment("sample_001", segment)
+
+# Stage 2: Run specialist analyses
+for analyst in ['rhetorician', 'syntactician']:
+    response = llm.complete(analyst_prompt)
+    store.save_analysis("sample_001", analyst, response.content, response.model)
+
+# Stage 3: Check completeness before proceeding
+if store.is_complete("sample_001", required_analysts):
+    sample, analyses = store.get_sample_with_analyses("sample_001")
+    # Proceed to integration...
+
+# Stage 4: Save cross-text synthesis
+cross_text_id = store.save_synthesis(
+    synthesis_type='cross_text_synthesis',
+    output=synthesis_output,
+    model='mistral-large-2411',
+    sample_contributions=[('sample_001', 'cross_perspective_integrator')],
+    config=cross_text_config
+)
+
+# Stage 5: Save principles guide (inherits provenance)
+principles_id = store.save_synthesis(
+    synthesis_type='principles_guide',
+    output=principles_output,
+    model='mistral-large-2411',
+    sample_contributions=[],  # Empty - inherits from parent
+    config=principles_config,
+    parent_synthesis_id=cross_text_id
+)
+
+# Export with full metadata
+store.export_synthesis(principles_id, Path('style_guide.txt'))
+```
+
+## Limitations & Scope
+
+This is NOT:
+- A general-purpose vector database for semantic search
+- A conversation memory system for chatbots
+- A tool for managing arbitrary LLM workflows
+
+This IS:
+- A cache for expensive multi-stage analysis pipelines
+- A provenance tracker for reproducible research
+- A schema tailored to the specific workflow: sample → analyze → integrate → synthesize
 """
-from typing import Optional, Literal, Union
+from typing import Optional, Literal
 import sqlite3
 from pathlib import Path
 import json
@@ -16,43 +140,17 @@ from datetime import datetime
 
 
 class ResultStore:
-    """SQLite-backed storage for samples and multi-analyst results.
+    """SQLite-backed storage for multi-stage text analysis workflows.
 
-    Manages five tables:
-    - samples: Text samples with provenance (where they came from)
-    - analyses: Analyst outputs for each sample
-    - syntheses: Final synthesis outputs with auto-generated IDs
-    - synthesis_samples: Links syntheses to their input samples/analyses
-    - synthesis_metadata: Pre-computed metadata for queries
+    See module docstring for full design philosophy and data model details.
 
-    Example:
-        from belletrist import DataSampler, ResultStore
+    This class provides CRUD operations for three data tiers:
+    1. Samples: save_sample(), get_sample(), list_samples()
+    2. Analyses: save_analysis(), get_analysis(), is_complete()
+    3. Syntheses: save_synthesis(), get_synthesis(), export_synthesis()
 
-        sampler = DataSampler()
-        store = ResultStore(Path("results.db"))
-
-        # Save a text segment with automatic provenance
-        segment = sampler.sample_segment(10)
-        store.save_segment("sample_001", segment)
-
-        # Save analyses
-        store.save_analysis("sample_001", "rhetorician", output="...", model="gpt-4")
-
-        # Retrieve everything (returns dicts)
-        sample, analyses = store.get_sample_with_analyses("sample_001")
-        print(sample['text'])  # Access via dict keys
-
-        # Save final syntheses with auto-generated IDs
-        cross_text_id = store.save_synthesis(
-            synthesis_type='cross_text_synthesis',
-            output='...',
-            model='mistral/mistral-large-2411',
-            sample_contributions=[('sample_001', 'cross_perspective_integrator')],
-            config=cross_text_config
-        )
-
-        # Export to filesystem
-        store.export_synthesis(cross_text_id, Path('output.txt'))
+    All methods return dicts (not custom objects) for lightweight integration.
+    Foreign key constraints ensure referential integrity at the database level.
     """
 
     def __init__(self, filepath: Path):
@@ -640,6 +738,11 @@ class ResultStore:
     ) -> None:
         """Export synthesis to filesystem with metadata header.
 
+        Metadata inheritance: If a synthesis has empty sample_contributions (e.g.,
+        principles_guide) and a parent_id, it inherits num_samples and sample_ids
+        from its parent during export. This provides useful provenance in exported
+        files while maintaining clean relational structure in the database.
+
         Args:
             synthesis_id: Synthesis identifier
             output_path: Path to write output file
@@ -663,12 +766,33 @@ class ResultStore:
         if synthesis['parent_id']:
             metadata['parent_synthesis_id'] = synthesis['parent_id']
 
-        if synthesis.get('metadata'):
+        # Handle metadata - inherit from parent if empty
+        synth_metadata = synthesis.get('metadata', {})
+        if synth_metadata.get('num_samples', 0) == 0 and synthesis['parent_id']:
+            # Inherit sample metadata from parent
+            parent = self.get_synthesis_with_metadata(synthesis['parent_id'])
+            if parent and parent.get('metadata'):
+                parent_metadata = parent['metadata']
+                metadata.update({
+                    'num_samples': parent_metadata['num_samples'],
+                    'sample_ids': parent_metadata['sample_ids'],
+                    'is_homogeneous_model': synth_metadata.get('is_homogeneous_model', True),
+                    'models_used': synth_metadata.get('models_used', [synthesis['model']])
+                })
+            else:
+                # Fallback to current metadata if parent has none
+                metadata.update({
+                    'num_samples': synth_metadata.get('num_samples', 0),
+                    'sample_ids': synth_metadata.get('sample_ids', []),
+                    'is_homogeneous_model': synth_metadata.get('is_homogeneous_model', True),
+                    'models_used': synth_metadata.get('models_used', [synthesis['model']])
+                })
+        elif synth_metadata:
             metadata.update({
-                'num_samples': synthesis['metadata']['num_samples'],
-                'sample_ids': synthesis['metadata']['sample_ids'],
-                'is_homogeneous_model': synthesis['metadata']['is_homogeneous_model'],
-                'models_used': synthesis['metadata']['models_used']
+                'num_samples': synth_metadata['num_samples'],
+                'sample_ids': synth_metadata['sample_ids'],
+                'is_homogeneous_model': synth_metadata['is_homogeneous_model'],
+                'models_used': synth_metadata['models_used']
             })
 
         # Format metadata header
