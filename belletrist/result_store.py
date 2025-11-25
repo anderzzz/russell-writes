@@ -315,19 +315,57 @@ class ResultStore:
         analyses = self.get_all_analyses(sample_id)
         return all(analyst in analyses for analyst in required_analysts)
 
-    def reset(self):
-        """Clear all data from the store, removing all samples and analyses.
+    def reset(self, scope: Literal['all', 'analyses_and_syntheses', 'syntheses_only'] = 'all'):
+        """Clear data from the store with hierarchical scope control.
 
-        This performs a complete cleanse of the database, deleting all records
-        from both the samples and analyses tables. The schema/table structure
-        is preserved, so you can immediately start storing new data.
+        The data has a clear dependency hierarchy:
+            samples (base)
+              ↓
+            analyses (depends on samples via FK)
+              ↓
+            synthesis_samples (junction: depends on analyses via composite FK)
+              ↓
+            syntheses (can have parent_synthesis_id FK to itself)
+              ↓
+            synthesis_metadata (depends on syntheses via FK)
+
+        Valid reset operations must respect this hierarchy - you cannot delete
+        upstream data (e.g., samples) while preserving downstream data (e.g., syntheses)
+        without violating foreign key constraints.
+
+        Args:
+            scope: Reset scope controlling which tables to clear:
+                - 'all': Delete everything (samples, analyses, syntheses)
+                - 'analyses_and_syntheses': Keep samples, delete analyses + syntheses
+                - 'syntheses_only': Keep samples + analyses, delete only syntheses
 
         Warning:
-            This operation is irreversible. All stored samples and analyses
+            This operation is irreversible. All data in the selected scope
             will be permanently deleted.
+
+        Design Notes:
+            - Deletion order matters: must delete child tables before parents
+            - synthesis_samples and synthesis_metadata have ON DELETE CASCADE,
+              so they're automatically cleaned when syntheses are deleted
+            - Cannot delete samples while keeping analyses (would violate FKs)
+            - Cannot delete analyses while keeping syntheses (would violate FKs)
         """
-        self.conn.execute("DELETE FROM analyses")
-        self.conn.execute("DELETE FROM samples")
+        if scope == 'all':
+            # Delete everything in reverse dependency order
+            # synthesis_metadata and synthesis_samples auto-cascade
+            self.conn.execute("DELETE FROM syntheses")
+            self.conn.execute("DELETE FROM analyses")
+            self.conn.execute("DELETE FROM samples")
+        elif scope == 'analyses_and_syntheses':
+            # Keep samples, delete everything downstream
+            self.conn.execute("DELETE FROM syntheses")
+            self.conn.execute("DELETE FROM analyses")
+        elif scope == 'syntheses_only':
+            # Keep samples and analyses, delete only syntheses
+            self.conn.execute("DELETE FROM syntheses")
+        else:
+            raise ValueError(f"Invalid scope: {scope}. Must be 'all', 'analyses_and_syntheses', or 'syntheses_only'")
+
         self.conn.commit()
 
     def _get_next_synthesis_id(self, synthesis_type: str) -> str:
