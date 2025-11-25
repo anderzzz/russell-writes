@@ -501,6 +501,9 @@ class StyleReconstructionInstructionsConfig(BasePromptConfig):
     Configuration for style_reconstruction_instructions.jinja - derived instructions.
 
     Applies explicitly derived style instructions from the synthesis pipeline.
+
+    Note: If style_instructions contains YAML front-matter (delimited by ---),
+    it will be automatically stripped, leaving only the instructions content.
     """
 
     content_summary: str = Field(
@@ -513,6 +516,35 @@ class StyleReconstructionInstructionsConfig(BasePromptConfig):
         min_length=1,
         description="Derived style principles from SynthesizerOfPrinciplesConfig"
     )
+
+    @field_validator('style_instructions')
+    @classmethod
+    def strip_yaml_frontmatter(cls, v: str) -> str:
+        """
+        Strip YAML front-matter if present.
+
+        Front-matter is identified by starting with '---' and ending with '---',
+        as exported by ResultStore.export_synthesis().
+        """
+        v = v.strip()
+
+        # Check if starts with YAML front-matter delimiter
+        if v.startswith('---\n') or v.startswith('---\r\n'):
+            # Find the closing delimiter
+            lines = v.split('\n')
+            end_index = None
+
+            for i, line in enumerate(lines[1:], start=1):  # Skip first ---
+                if line.strip() == '---':
+                    end_index = i
+                    break
+
+            if end_index is not None:
+                # Return everything after the closing ---
+                return '\n'.join(lines[end_index + 1:]).strip()
+
+        # No front-matter found, return as-is
+        return v
 
     @classmethod
     def template_name(cls) -> str:
