@@ -1,0 +1,160 @@
+---
+synthesis_id: principles_guide_001
+synthesis_type: principles_guide
+model: together_ai/Qwen/Qwen3-235B-A22B-Instruct-2507-tput
+created_at: 2025-11-25T18:08:35.705147
+parent_synthesis_id: cross_text_synthesis_001
+num_samples: 5
+sample_ids:
+  - sample_001
+  - sample_004
+  - sample_002
+  - sample_003
+  - sample_005
+is_homogeneous_model: true
+models_used:
+  - together_ai/Qwen/Qwen3-235B-A22B-Instruct-2507-tput
+---
+
+# A GUIDE TO PHILOSOPHICAL CLARITY  
+## Principles Extracted from Pattern Analysis
+
+---
+
+### PART I: FOUNDATIONS  
+## **Core Principles**
+
+---
+
+**1. Anchor every claim in a simple, early main clause.**  
+Place your core assertion in a grammatically independent clause of 6–15 words, positioned at or near the beginning of the sentence. Do not bury the claim inside subordinate constructions or after lengthy qualifications. This creates immediate cognitive grounding, allowing the reader to process complexity *in relation to* a stable proposition.  
+> "Other people are represented to me by certain sense-data..."  
+> "Reason is a harmonising, controlling force rather than a creative one."  
+> "The first characteristic of two appearances... is continuity."  
+When qualifications are necessary, subordinate them—do not let them precede or enclose the main claim. This structure prevents ambiguity and maintains epistemic authority.  
+**Dependencies**: Enables controlled hedging, supports paragraph coherence, and makes complex syntax navigable. Without this, even precise ideas become cognitively unstable.
+
+---
+
+**2. Follow every abstract claim with a concrete illustration.**  
+After stating any abstract idea—epistemic, metaphysical, or normative—immediately ground it with a brief (6–20 word), sensory-based analogy from shared perceptual or lived experience. Use Germanic-rooted vocabulary and familiar domains (domestic, natural, bodily).  
+> "...becomes utterly inexplicable when regarded as mere movements and changes of patches of colour, which are as incapable of hunger as a triangle is of playing football."  
+> "The savage deceived by false friendship is likely to pay for his mistake with his life..."  
+> "Just as a photographic plate receives a different impression... so a brain receives a different impression..."  
+This alternation prevents abstraction from floating free of understanding. The concrete instance acts as a perceptual anchor, making the abstract claim *thinkable*.  
+**Dependencies**: Enables abstract reasoning without obscurity. Without this, philosophical claims risk becoming purely formal or disconnected from human experience.
+
+---
+
+**3. Begin each sentence by connecting to what came before.**  
+Open every sentence with 3–5 words that refer back to the previous sentence—via pronoun, repetition, or synonym. Delay new information until the second half of the sentence. Maintain subject continuity within paragraphs (in >80% of sentences).  
+> "Instinct, like all human faculties, is liable to error." → "Those in whom reason is weak are often unwilling to admit this..."  
+> "We can now begin to understand..." → "It is clear that psychology is concerned essentially with actual particulars..."  
+> "Something subjective... must remain in all our thought. But scientific philosophy comes nearer to objectivity..."  
+This reduces cognitive load by anchoring new claims in accessible prior concepts. It creates a chain of thought the reader can follow without backtracking.  
+**Dependencies**: Enables long, complex arguments to remain coherent. Without this, even well-structured ideas fracture into isolated statements.
+
+---
+
+### PART II: TECHNIQUES
+
+---
+
+## **Sentence-Level Techniques**
+
+**1. The Anchored Main Clause**  
+Start each sentence with a clear, independent clause (6–15 words) that states the core claim. Place all qualifications, conditions, or exceptions in subordinate clauses that follow. Never embed the main claim within a dependent construction.  
+**Use when**: Making assertions, stating definitions, or advancing arguments.  
+**Model**:  
+*Weak*: "Although reason is not creative, it may still function as a controlling force in thought."  
+*Strong*: "Reason is a harmonising, controlling force rather than a creative one."  
+> "Other people are represented to me by certain sense-data..."  
+> "The good which it concerns us to remember is the good which it lies in our power to create..."  
+> "We can now begin to understand one of the fundamental differences between physics and psychology."
+
+---
+
+**2. The Qualifying Scaffold**  
+After your main clause, add one or more subordinate clauses to qualify, limit, or refine the claim. Keep these clauses between 15–35 words. Use em dashes or commas to set off parenthetical hedges of 4–8 words. Never place these in the main clause.  
+**Use when**: Acknowledging uncertainty, refining scope, or distancing from overstatement.  
+**Model**:  
+*Weak*: "We may admit, though with a slight doubt derived from dreams, that the external world does really exist..."  
+*Strong*: "We may therefore admit--though with a slight doubt derived from dreams--that the external world does really exist..."  
+> "We may therefore admit--though with a slight doubt derived from dreams--that the external world does really exist..."  
+> "Thus we can only say that the sense-data... may be such a complement."  
+> "It is usually found that the changes can be accounted for by changes in objects..."
+
+---
+
+**3. The Given-First Sequence**  
+Begin each sentence with a reference to the prior sentence—via repetition, pronoun, or synonym. Position new information in the second half of the sentence. Maintain consistent subject focus within paragraphs.  
+**Use when**: Building a sustained argument or explanation.  
+**Model**:  
+*Weak*: "Psychology studies actual particulars. This distinguishes it from physics."  
+*Strong*: "We can now begin to understand one of the fundamental differences between physics and psychology." → "It is clear that psychology is concerned essentially with actual particulars..."  
+> "Instinct, like all human faculties, is liable to error." → "Those in whom reason is weak are often unwilling to admit this..."  
+> "Thus physics is able to reduce..." → "The whole of psychology, we shall find, is included among such cases..."
+
+---
+
+**4. The Concessive Front-Load**  
+When making a counterintuitive or contested claim, open with a brief concession (4–8 words) using "although," "in spite of," or "while." Place this in a fronted subordinate clause or em-dashed insertion. Keep the main clause assertive.  
+**Use when**: Engaging skepticism, softening strong claims, or positioning against alternatives.  
+**Model**:  
+*Weak*: "Evolutionism appeals to facts but isn’t scientific."  
+*Strong*: "Evolutionism, in spite of its appeals to particular scientific facts, fails to be a truly scientific philosophy..."  
+> "Evolutionism, in spite of its appeals to particular scientific facts, fails to be a truly scientific philosophy..."  
+> "But although X, Y; and it is, in fact, Z" — used in high-complexity passages to acknowledge counterclaims while maintaining direction.
+
+---
+
+**5. The Parallel Contrast Frame**  
+Structure comparisons using parallel syntax: "A is X, but B is Y." Use this to distinguish concepts, disciplines, or modes of thought. Keep both clauses independent and balanced in length.  
+**Use when**: Differentiating ideas, clarifying boundaries, or setting up dichotomies.  
+**Model**:  
+> "Reason is a harmonising, controlling force rather than a creative one."  
+> "The colour of the leaves is different in autumn from what it is in summer..."  
+> "offering less glitter of outward mirage to flatter fallacious hopes..."
+
+---
+
+**6. The Three-Level Subordination Limit**  
+When stacking subordinate clauses, do not exceed three levels of embedding. If complexity increases, break the sentence. Use punctuation (commas, semicolons, em dashes) to segment layered thought.  
+**Use when**: Explaining multi-conditioned claims or nested reasoning.  
+**Model**:  
+> "Just as a photographic plate receives a different impression... so a brain receives a different impression..."  
+This structure uses analogy as a scaffold without overloading syntax.
+
+---
+
+**7. The Terminal Pivot**  
+End a paragraph or section with a sentence that either summarizes the argument or pivots to the next idea. Use logical connectors: "Thus," "Hence," "But although," "We may therefore."  
+**Use when**: Closing a unit of thought or transitioning.  
+> "Scientific philosophy thus represents, though as yet only in a nascent condition, a higher form of thought..."  
+> "We can now begin to understand one of the fundamental differences between physics and psychology."
+
+---
+
+**8. The Minimalist Modifier Rule**  
+Use adjectives and adverbs only when they perform essential semantic work. Avoid decorative modifiers. Prefer strong nouns and verbs.  
+**Use when**: Refining tone and eliminating clutter.  
+> "offering less glitter of outward mirage to flatter fallacious hopes..." — "glitter" and "mirage" carry the metaphor; "outward" and "fallacious" refine it. No empty intensifiers.
+
+---
+
+## **Word-Level Techniques**
+
+**1. Strategic Plainness**  
+For core claims, use short, Germanic-rooted words (e.g., *good*, *life*, *change*, *force*). Reserve Latinate terms (*constituting*, *intervening*, *epistemic*) for technical precision, not ornament.  
+**Use when**: Stating central propositions.  
+**Preferred**: *good*, *life*, *change*, *force*  
+**Avoid**: *benevolent*, *existence*, *transformation*, *agency* (unless required)  
+> "The good which it concerns us to remember is the good which it lies in our power to create..."  
+> "The savage deceived by false friendship is likely to pay for his mistake with his life..."
+
+---
+
+**2. Concrete-First Lexical Order**  
+When pairing abstract and concrete terms, place the concrete first if possible, or embed the abstract within a concrete frame.  
+**Use when**: Introducing abstract concepts.  
+> "Just as a photographic plate receives a different impression... so a
