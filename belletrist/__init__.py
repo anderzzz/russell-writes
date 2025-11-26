@@ -14,6 +14,7 @@ from belletrist.llm import LLM, ToolLLM
 from belletrist.prompt_maker import PromptMaker
 from belletrist.data_sampler import DataSampler
 from belletrist.result_store import ResultStore
+from belletrist.style_evaluation_store import StyleEvaluationStore
 
 __all__ = [
     # LLM core
@@ -24,5 +25,5 @@ __all__ = [
     "Tool", "WordCountTool",
 
     # Utilities
-    "PromptMaker", "DataSampler", "ResultStore",
+    "PromptMaker", "DataSampler", "ResultStore", "StyleEvaluationStore",
 ]
