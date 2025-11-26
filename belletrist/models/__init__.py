@@ -32,6 +32,7 @@ from belletrist.models.prompt_models import (
 
     # Style evaluation
     StyleFlatteningConfig,
+    StyleFlatteningAggressiveConfig,
     StyleReconstructionGenericConfig,
     StyleReconstructionFewShotConfig,
     StyleReconstructionAuthorConfig,
@@ -60,7 +61,7 @@ __all__ = [
     "SynthesizerOfPrinciplesConfig",
 
     # Style evaluation
-    "StyleFlatteningConfig", "StyleReconstructionGenericConfig",
-    "StyleReconstructionFewShotConfig", "StyleReconstructionAuthorConfig",
-    "StyleReconstructionInstructionsConfig"
+    "StyleFlatteningConfig", "StyleFlatteningAggressiveConfig",
+    "StyleReconstructionGenericConfig", "StyleReconstructionFewShotConfig",
+    "StyleReconstructionAuthorConfig", "StyleReconstructionInstructionsConfig"
 ]

@@ -414,11 +414,12 @@ class SynthesizerOfPrinciplesConfig(BasePromptConfig):
 
 class StyleFlatteningConfig(BasePromptConfig):
     """
-    Configuration for style_flattening.jinja - content extraction.
+    Configuration for style_flattening.jinja - moderate content extraction.
 
     Extracts semantic and argumentative content from text while removing
     all stylistic elements, creating a style-neutral summary suitable for
-    reconstruction experiments.
+    reconstruction experiments. Produces prose-form output at ~70-90% of
+    original length.
     """
 
     text: str = Field(
@@ -430,6 +431,29 @@ class StyleFlatteningConfig(BasePromptConfig):
     @classmethod
     def template_name(cls) -> str:
         return "style_flattening"
+
+
+class StyleFlatteningAggressiveConfig(BasePromptConfig):
+    """
+    Configuration for style_flattening_aggressive.jinja - aggressive compression.
+
+    Extracts propositional content as a bare logical skeleton in outline format.
+    Uses telegraphic language with no transitions or rhetoric. Aims for 30-50%
+    of original length.
+
+    More aggressive than StyleFlatteningConfig - better for testing whether
+    reconstruction methods can truly rebuild style from minimal content.
+    """
+
+    text: str = Field(
+        ...,
+        min_length=1,
+        description="The text to compress into outline format"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_flattening_aggressive"
 
 
 class StyleReconstructionGenericConfig(BasePromptConfig):
