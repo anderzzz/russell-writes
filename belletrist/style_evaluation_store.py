@@ -37,7 +37,7 @@ Usage:
     # Export for analysis
     df = store.to_dataframe()  # Rankings resolved to methods
 """
-from typing import Optional
+from typing import Optional, Literal
 import sqlite3
 from pathlib import Path
 from datetime import datetime
@@ -476,6 +476,64 @@ class StyleEvaluationStore:
             'n_reconstructions': n_reconstructions,
             'n_judgments': n_judgments
         }
+
+    # ==========================================================================
+    # Reset Methods
+    # ==========================================================================
+
+    def reset(self, scope: Literal['all', 'reconstructions_and_judgments', 'judgments_only'] = 'all'):
+        """Clear data from the store with hierarchical scope control.
+
+        The data has a clear dependency hierarchy:
+            samples (base)
+              ↓
+            reconstructions (depends on samples via FK)
+              ↓
+            comparative_judgments (depends on samples via FK)
+
+        Valid reset operations must respect this hierarchy - you cannot delete
+        upstream data (e.g., samples) while preserving downstream data (e.g., judgments)
+        without violating foreign key constraints.
+
+        Args:
+            scope: Reset scope controlling which tables to clear:
+                - 'all': Delete everything (samples, reconstructions, judgments)
+                - 'reconstructions_and_judgments': Keep samples, delete reconstructions + judgments
+                - 'judgments_only': Keep samples + reconstructions, delete only judgments
+
+        Warning:
+            This operation is irreversible. All data in the selected scope
+            will be permanently deleted.
+
+        Design Notes:
+            - Deletion order matters: must delete child tables before parents
+            - Cannot delete samples while keeping reconstructions (would violate FKs)
+            - Cannot delete reconstructions while keeping judgments (would violate FKs)
+
+        Example:
+            >>> store.reset('judgments_only')  # Re-run judging, keep reconstructions
+            >>> store.reset('reconstructions_and_judgments')  # Re-run reconstruction + judging
+            >>> store.reset('all')  # Fresh start
+        """
+        if scope == 'all':
+            # Delete everything in reverse dependency order
+            self.conn.execute("DELETE FROM comparative_judgments")
+            self.conn.execute("DELETE FROM reconstructions")
+            self.conn.execute("DELETE FROM samples")
+        elif scope == 'reconstructions_and_judgments':
+            # Keep samples, delete everything downstream
+            self.conn.execute("DELETE FROM comparative_judgments")
+            self.conn.execute("DELETE FROM reconstructions")
+        elif scope == 'judgments_only':
+            # Keep samples and reconstructions, delete only judgments
+            self.conn.execute("DELETE FROM comparative_judgments")
+        else:
+            raise ValueError(
+                f"Invalid scope: {scope}. "
+                f"Must be 'all', 'reconstructions_and_judgments', or 'judgments_only'"
+            )
+
+        self.conn.commit()
 
     def close(self):
         """Close database connection."""
