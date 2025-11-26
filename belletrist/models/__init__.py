@@ -2,8 +2,9 @@ from belletrist.models.llm_config_models import (
     LLMConfig,
     Message,
     LLMRole,
-    LLMResponse,
-    StyleJudgment,
+    LLMResponse
+)
+from belletrist.models.style_evaluation_models import (
     MethodMapping,
     StyleJudgmentComparative
 )
@@ -35,13 +36,13 @@ from belletrist.models.prompt_models import (
     StyleReconstructionFewShotConfig,
     StyleReconstructionAuthorConfig,
     StyleReconstructionInstructionsConfig,
-    StyleJudgeConfig,
-    StyleJudgeComparativeConfig,
 )
 
 __all__ = [
     # LLM core
-    "LLMConfig", "Message", "LLMRole", "LLMResponse", "StyleJudgment",
+    "LLMConfig", "Message", "LLMRole", "LLMResponse",
+
+    # Style evaluation
     "MethodMapping", "StyleJudgmentComparative",
 
     # Base classes
@@ -61,6 +62,5 @@ __all__ = [
     # Style evaluation
     "StyleFlatteningConfig", "StyleReconstructionGenericConfig",
     "StyleReconstructionFewShotConfig", "StyleReconstructionAuthorConfig",
-    "StyleReconstructionInstructionsConfig", "StyleJudgeConfig",
-    "StyleJudgeComparativeConfig",
+    "StyleReconstructionInstructionsConfig"
 ]

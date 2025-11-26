@@ -94,8 +94,11 @@ Required environment variables:
    - Few-shot learning
    - Author name prompting
    - Derived style instructions
-3. **Judge**: Compare each reconstruction vs. original using structured JSON output (`StyleJudgeConfig` → `StyleJudgment`)
-4. **Analyze**: Aggregate judgments in DataFrame, export to CSV
+3. **Judge (Blind Comparative)**: Rank all 4 reconstructions (1-4) by similarity to original using blind evaluation (`StyleJudgeComparativeConfig` → `StyleJudgmentComparative`)
+   - Judge sees only anonymous labels (Text A/B/C/D), not method names
+   - Optional randomization of label-to-method mapping eliminates position bias
+4. **Store**: Save to SQLite (crash-resilient, supports resume)
+5. **Analyze**: Export rankings resolved to methods, calculate mean rankings and win rates
 
 ## Core Architectural Patterns
 
@@ -174,15 +177,18 @@ For structured responses, use `complete_json()`:
 
 ```python
 # Define Pydantic model for validation
-class StyleJudgment(BaseModel):
-    ranking: Literal["original_better", "reconstruction_better", "roughly_equal"]
+class StyleJudgmentComparative(BaseModel):
+    ranking_text_a: int = Field(..., ge=1, le=4)
+    ranking_text_b: int = Field(..., ge=1, le=4)
+    ranking_text_c: int = Field(..., ge=1, le=4)
+    ranking_text_d: int = Field(..., ge=1, le=4)
     confidence: Literal["high", "medium", "low"]
     reasoning: str
 
 # LLM call with JSON mode
 response = llm.complete_json(judge_prompt)
 judgment_data = json.loads(response.content)
-judgment = StyleJudgment(**judgment_data)  # Validates structure
+judgment = StyleJudgmentComparative(**judgment_data)  # Validates structure
 ```
 
 ### 6. Synthesis Storage and Provenance
@@ -366,12 +372,13 @@ All prompts are provider-agnostic.
 
 ### `/belletrist/models/`
 
-Two model files with distinct purposes:
+Three model files with distinct purposes:
 
-- **`llm_config_models.py`**: LLM interface models (LLMConfig, Message, LLMResponse, StyleJudgment)
+- **`llm_config_models.py`**: Core LLM interface models (LLMConfig, Message, LLMRole, LLMResponse)
 - **`prompt_models.py`**: Prompt configuration models (all `*Config` classes that map to templates)
+- **`style_evaluation_models.py`**: Style evaluation-specific models (MethodMapping, StyleJudgmentComparative)
 
-When adding structured output schemas, add to `llm_config_models.py`. When adding new prompt types, add to `prompt_models.py`.
+When adding core LLM functionality, add to `llm_config_models.py`. When adding new prompt types, add to `prompt_models.py`. When adding evaluation-specific structured outputs, add to `style_evaluation_models.py`.
 
 ### `/prompts/` Template Naming
 
