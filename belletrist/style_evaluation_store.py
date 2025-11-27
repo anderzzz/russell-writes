@@ -43,6 +43,7 @@ from pathlib import Path
 from datetime import datetime
 import pandas as pd
 import random
+import shutil
 
 
 class StyleEvaluationStore:
@@ -71,6 +72,7 @@ class StyleEvaluationStore:
                 sample_id TEXT PRIMARY KEY,
                 original_text TEXT NOT NULL,
                 flattened_content TEXT NOT NULL,
+                flattening_model TEXT NOT NULL,
                 source_info TEXT
             )
         """)
@@ -128,6 +130,7 @@ class StyleEvaluationStore:
         sample_id: str,
         original_text: str,
         flattened_content: str,
+        flattening_model: str,
         source_info: Optional[str] = None
     ):
         """Store a text sample with its flattened content.
@@ -136,12 +139,13 @@ class StyleEvaluationStore:
             sample_id: Unique identifier for this sample
             original_text: The original gold standard text
             flattened_content: Content-only summary (output of style flattening)
+            flattening_model: Model used for flattening (e.g., 'anthropic/claude-haiku')
             source_info: Optional provenance (e.g., "File 0, para 50-55")
         """
         self.conn.execute("""
             INSERT OR REPLACE INTO samples
-            VALUES (?, ?, ?, ?)
-        """, (sample_id, original_text, flattened_content, source_info))
+            VALUES (?, ?, ?, ?, ?)
+        """, (sample_id, original_text, flattened_content, flattening_model, source_info))
         self.conn.commit()
 
     def get_sample(self, sample_id: str) -> Optional[dict]:
@@ -151,8 +155,8 @@ class StyleEvaluationStore:
             sample_id: Sample identifier
 
         Returns:
-            Dictionary with keys: sample_id, original_text, flattened_content, source_info
-            Returns None if not found
+            Dictionary with keys: sample_id, original_text, flattened_content,
+            flattening_model, source_info. Returns None if not found
         """
         row = self.conn.execute(
             "SELECT * FROM samples WHERE sample_id=?",
@@ -166,6 +170,7 @@ class StyleEvaluationStore:
             'sample_id': row['sample_id'],
             'original_text': row['original_text'],
             'flattened_content': row['flattened_content'],
+            'flattening_model': row['flattening_model'],
             'source_info': row['source_info']
         }
 
@@ -534,6 +539,50 @@ class StyleEvaluationStore:
             )
 
         self.conn.commit()
+
+    def copy_to(self, destination: Path) -> 'StyleEvaluationStore':
+        """Create a copy of this database at a new location.
+
+        Useful for running multiple experiments with the same flattened samples
+        but different reconstruction/judging models.
+
+        Args:
+            destination: Path for the new database file
+
+        Returns:
+            New StyleEvaluationStore instance pointing to the copied database
+
+        Raises:
+            FileExistsError: If destination already exists
+
+        Example:
+            >>> store1 = StyleEvaluationStore(Path("exp1.db"))
+            >>> # ... run flattening, reconstruction, judging
+            >>> store2 = store1.copy_to(Path("exp2.db"))
+            >>> store2.reset('reconstructions_and_judgments')
+            >>> # ... run new reconstruction/judging with different models
+        """
+        destination = Path(destination)
+
+        if destination.exists():
+            raise FileExistsError(
+                f"Destination {destination} already exists. "
+                f"Delete it first or choose a different path."
+            )
+
+        # Close current connection to ensure all writes are flushed
+        self.conn.close()
+
+        # Copy the database file
+        shutil.copy2(self.filepath, destination)
+
+        # Reopen this connection
+        self.conn = sqlite3.connect(self.filepath)
+        self.conn.row_factory = sqlite3.Row
+        self.conn.execute("PRAGMA foreign_keys = ON")
+
+        # Return new instance pointing to the copy
+        return StyleEvaluationStore(destination)
 
     def close(self):
         """Close database connection."""

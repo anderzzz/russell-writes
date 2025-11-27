@@ -573,3 +573,43 @@ class StyleReconstructionInstructionsConfig(BasePromptConfig):
     @classmethod
     def template_name(cls) -> str:
         return "style_reconstruction_instructions"
+
+
+class StyleJudgeComparativeConfig(BasePromptConfig):
+    """
+    Configuration for style_judge_comparative.jinja - blind comparative ranking.
+
+    Provides the original text and 4 anonymously labeled reconstructions (A, B, C, D)
+    for comparative blind evaluation. The judge ranks all 4 from 1-4 based on
+    stylistic similarity to the original.
+    """
+
+    original_text: str = Field(
+        ...,
+        min_length=1,
+        description="The original gold standard text"
+    )
+    reconstruction_text_a: str = Field(
+        ...,
+        min_length=1,
+        description="Reconstruction labeled as Text A (anonymous)"
+    )
+    reconstruction_text_b: str = Field(
+        ...,
+        min_length=1,
+        description="Reconstruction labeled as Text B (anonymous)"
+    )
+    reconstruction_text_c: str = Field(
+        ...,
+        min_length=1,
+        description="Reconstruction labeled as Text C (anonymous)"
+    )
+    reconstruction_text_d: str = Field(
+        ...,
+        min_length=1,
+        description="Reconstruction labeled as Text D (anonymous)"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_judge_comparative"
