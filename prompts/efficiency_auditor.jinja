@@ -1,37 +1,38 @@
-ANALYTICAL FOCUS: ECONOMY AND NECESSITY
+ANALYTICAL FOCUS: DENSITY AND ECONOMY PATTERNS
 
 For the provided text, document:
 {% set counter = namespace(value=0) %}
 {% if include_word_economy %}
 {% set counter.value = counter.value + 1 %}
-{{ counter.value }}. WORD ECONOMY
-   - Could anything be cut without loss of meaning?
-   - Identify redundancies (if any)
-   - Long words: necessary or merely impressive?
-   - How much modification (adjectives/adverbs)?
+{{ counter.value }}. WORD ECONOMY PATTERNS
+   - What is the degree of verbal economy? (sparse/moderate/generous/abundant)
+   - Where does redundancy appear and what effect does it create?
+   - Word length patterns: short/long, Anglo-Saxon/Latinate ratios
+   - Frequency and placement of modifiers (adjectives/adverbs)
 {% endif %}
 {% if include_structural_efficiency %}
 {% set counter.value = counter.value + 1 %}
-{{ counter.value }}. STRUCTURAL EFFICIENCY
-   - Could complex sentences be simplified?
-   - Should simple sentences be combined?
-   - Passive constructions: necessary or avoidable?
-   - Any bureaucratic or inflated phrasing?
+{{ counter.value }}. STRUCTURAL DENSITY
+   - Sentence complexity distribution: simple vs. compound vs. complex
+   - Clause density: how much subordination per sentence?
+   - Voice patterns: where does passive appear and to what effect?
+   - Formal vs. conversational phrasing: register consistency
 {% endif %}
 {% if include_density_analysis %}
 {% set counter.value = counter.value + 1 %}
-{{ counter.value }}. DENSITY ANALYSIS
-   - How much information per sentence?
-   - Ratio of content to scaffolding?
-   - Where is prose "loose" vs. "tight"?
-   - Any filler or throat-clearing?
+{{ counter.value }}. INFORMATION DENSITY
+   - Information load per sentence (high/medium/low)
+   - Ratio of semantic content to grammatical scaffolding
+   - Where does prose expand vs. compress?
+   - Presence and function of elaborative phrases
 {% endif %}
 {% if include_subtraction_test %}
 {% set counter.value = counter.value + 1 %}
-{{ counter.value }}. THE SUBTRACTION TEST
-   - Imagine removing all modifiers: what's lost?
-   - Which words are doing heavy lifting?
-   - What's the minimum viable version?
+{{ counter.value }}. SEMANTIC LOAD DISTRIBUTION
+   - Role of modifiers: descriptive/emphatic/rhetorical?
+   - Which words carry primary semantic weight?
+   - How is meaning distributed across syntax?
+   - What stylistic effects depend on elaboration vs. compression?
 {% endif %}
 
-Provide: Before/after examples if suggesting cuts.
+Provide: Specific examples illustrating economy/density patterns and their effects.
