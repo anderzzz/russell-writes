@@ -1,0 +1,395 @@
+---
+synthesis_id: principles_guide_001
+synthesis_type: principles_guide
+model: mistral-large-2411
+created_at: 2025-11-27T17:34:09.964355
+parent_synthesis_id: cross_text_synthesis_001
+num_samples: 5
+sample_ids:
+  - sample_004
+  - sample_005
+  - sample_002
+  - sample_001
+  - sample_003
+is_homogeneous_model: true
+models_used:
+  - mistral-large-2411
+---
+
+# The Synthesist: A Prescriptive Style Guide
+
+## 1. FOUNDATIONAL PRINCIPLES (The Core Commitments)
+
+### A. State the Principle Clearly
+
+#### 1. Place Core Claims in Independent Clauses
+
+**State it clearly:** "Place core claims in independent clauses of 8-12 words."
+
+**Explain the mechanism:** This principle enhances clarity and directness by making the main argument immediately accessible. It allows the reader to grasp the core idea without being distracted by qualifications or subordinate details.
+
+**Demonstrate it:**
+- "Both these expectations seem to me mistaken." (Sample 005)
+- "Degrees of self-evidence are important in the theory of knowledge..." (Sample 002)
+
+**Show the dependencies:** This principle enables the use of subordinate clauses for qualifications and details, which provides depth without losing clarity. Without it, the text would become convoluted and hard to follow.
+
+#### 2. Use Formal and Precise Vocabulary
+
+**State it clearly:** "Use Latinate polysyllables for 80% of key terms."
+
+**Explain the mechanism:** This principle establishes an academic tone and ensures precision in technical explanations. It distinguishes between formal terms for core concepts and common terms for general readability.
+
+**Demonstrate it:**
+- "Physicists distinguish between macroscopic and microscopic equations..." (Sample 001)
+- "anthropocentrism," "metaphysical," "prevalent" (Sample 005)
+
+**Show the dependencies:** This principle allows for the occasional use of common terms, which makes the text accessible without sacrificing precision. It helps in maintaining a balance between technical accuracy and readability.
+
+#### 3. Balance Sentence Structure
+
+**State it clearly:** "Use a mix of simple and complex sentences."
+
+**Explain the mechanism:** This principle creates a balance between simplicity and complexity, making the text engaging and understandable. Simple sentences convey clear points, while complex sentences provide detailed explanations.
+
+**Demonstrate it:**
+- "Some analogies will make the difference clear." (Simple, Sample 001)
+- "Now if _v_ is a small fraction of the velocity of light, _m_ + ½ _mv²_ is almost exactly equal to _m_ / √(1 - _v²_)." (Complex, Sample 003)
+
+**Show the dependencies:** This principle ensures that complex sentences have 1-2 subordinate clauses, which provides depth without overwhelming the reader. Without it, the text would lack clarity and depth.
+
+## 2. SENTENCE-LEVEL TECHNIQUES (Specific, Actionable)
+
+### 1. The Qualifying Scaffold
+
+**Name it:** "The Qualifying Scaffold"
+
+**Describe it precisely:** Place your main claim in a simple independent clause. Position qualifications and complications in subordinate clauses that follow.
+
+**Specify dosage and frequency:**
+- **Classification:** TEXTURAL (35-45%)
+- **Frequency target:** Use in approximately 2 in 5 complex argumentative sentences
+- **Distribution guidance:** Concentrated when introducing technical concepts
+
+**Frame negative constraints:** Avoid using in every sentence. Reserve for when introducing technical concepts or complex arguments.
+
+**Show when to use it:** Use this technique when introducing technical concepts or complex arguments to provide clarity and depth.
+
+**Provide a model:**
+- Good: "The theory of relativity, despite its complexity, has revolutionized our understanding of the universe."
+- Bad: "Despite its complexity, the theory of relativity has revolutionized our understanding of the universe."
+
+**Demonstrate it:**
+- "Both these expectations seem to me mistaken." (Sample 005)
+- "Degrees of self-evidence are important in the theory of knowledge..." (Sample 002)
+
+### 2. The Direct Analogy
+
+**Name it:** "The Direct Analogy"
+
+**Describe it precisely:** Introduce complex concepts using vivid, everyday analogies, followed by a detailed explanation of how the analogy applies to the concept.
+
+**Specify dosage and frequency:**
+- **Classification:** TEXTURAL (25-35%)
+- **Frequency target:** Use in approximately 1 in 4 explanatory sentences
+- **Distribution guidance:** Concentrate at the beginning of explanations
+
+**Frame negative constraints:** Do not use in every explanation. Reserve for introducing new or abstract concepts.
+
+**Show when to use it:** Use this technique when introducing new or abstract concepts to make them more relatable and understandable.
+
+**Provide a model:**
+- Good: "Think of the human body as a store of energy, like a mass of dynamite."
+- Bad: "The human body is a store of energy."
+
+**Demonstrate it:**
+- "A shock to a mass of dynamite produces quite different effects from an equal shock to a mass of steel..." (Sample 001)
+- "The particulars are to be conceived, not on the analogy of bricks in a building, but rather on the analogy of notes in a symphony." (Sample 004)
+
+### 3. The Active Voice Priority
+
+**Name it:** "The Active Voice Priority"
+
+**Describe it precisely:** Use active voice predominantly to enhance clarity and directness. Use passive voice sparingly for emphasis.
+
+**Specify dosage and frequency:**
+- **Classification:** TEXTURAL (70-80%)
+- **Frequency target:** Use in approximately 80% of explanatory sentences
+- **Distribution guidance:** Distribute uniformly
+
+**Frame negative constraints:** Do not abandon active voice without clear reason. Use passive voice for emphasis only.
+
+**Show when to use it:** Use this technique for main arguments and key points to ensure clarity and directness.
+
+**Provide a model:**
+- Good: "The scientist conducted the experiment."
+- Bad: "The experiment was conducted by the scientist."
+
+**Demonstrate it:**
+- "A human body, like a mass of dynamite, contains a store of energy in unstable equilibrium." (Sample 001)
+- "The more self-evident proposition is to be retained and the less self-evident rejected." (Sample 002)
+
+## 3. WORD-LEVEL TECHNIQUES (Specific, Actionable)
+
+### 1. Strategic Plainness
+
+**Name it:** "Strategic Plainness"
+
+**Describe it precisely:** For central claims, prefer short Anglo-Saxon words. Reserve polysyllabic Latinate terms for technical precision where necessary.
+
+**Specify dosage and frequency:**
+- **Classification:** STRUCTURAL (75-85%)
+- **Frequency target:** Use plain monosyllables for 3 in 4 key terms
+
+**Frame negative constraints:** Do not fall below 70% plain vocabulary. Excessive formal register obscures meaning.
+
+**Show when to use it:** Use this technique for central claims and key points to ensure clarity and accessibility.
+
+**Provide examples:**
+- Good: "The theory is clear and simple."
+- Bad: "The hypothesis is lucid and uncomplicated."
+
+**Demonstrate it:**
+- "Physicists distinguish between macroscopic and microscopic equations..." (Sample 001)
+- "anthropocentrism," "metaphysical," "prevalent" (Sample 005)
+
+### 2. Technical Precision
+
+**Name it:** "Technical Precision"
+
+**Describe it precisely:** Use Latinate polysyllables for core concepts (80% of key terms), with occasional Germanic/Anglo-Saxon words for common terms.
+
+**Specify dosage and frequency:**
+- **Classification:** STRUCTURAL (80%)
+- **Frequency target:** Use in approximately 80% of technical explanations
+
+**Frame negative constraints:** Do not fall below 70% technical vocabulary. Insufficient precision undermines credibility.
+
+**Show when to use it:** Use this technique for technical or academic topics to establish credibility and precision.
+
+**Provide examples:**
+- Good: "The physicist distinguished between macroscopic and microscopic equations."
+- Bad: "The scientist saw a difference between big and small equations."
+
+**Demonstrate it:**
+- "Physicists distinguish between macroscopic and microscopic equations..." (Sample 001)
+- "anthropocentrism," "metaphysical," "prevalent" (Sample 005)
+
+## 4. PARAGRAPH-LEVEL TECHNIQUES (Specific, Actionable)
+
+### 1. The Anchored Progression
+
+**Name it:** "The Anchored Progression"
+
+**Describe it precisely:** Open each paragraph with a clear anchor sentence stating the paragraph's purpose. Build through 2-4 supporting sentences. Close with a sentence that either summarizes or pivots to the next thought.
+
+**Show when to use it:** Always use this technique to ensure clarity and coherence in your paragraphs.
+
+**Provide structural models:**
+- "First, consider the theory of relativity. It revolutionized our understanding of the universe. Einstein's work on the subject is groundbreaking. Finally, it has applications in modern physics."
+
+**Demonstrate it:**
+- "Both these expectations seem to me mistaken. They overlook the complexity of human behavior. Understanding this complexity is crucial for accurate analysis. Therefore, we must reconsider our assumptions."
+
+### 2. The Clear Explanation
+
+**Name it:** "The Clear Explanation"
+
+**Describe it precisely:** Use a mix of simple and complex sentences. Complex sentences should have 1-2 subordinate clauses for detail, while simple sentences should convey clear, direct points.
+
+**Show when to use it:** Use this technique when explaining complex ideas to ensure clarity and depth.
+
+**Provide structural models:**
+- "Some analogies will make the difference clear. For example, a human body, like a mass of dynamite, contains a store of energy in unstable equilibrium."
+
+**Demonstrate it:**
+- "Now if _v_ is a small fraction of the velocity of light, _m_ + ½ _mv²_ is almost exactly equal to _m_ / √(1 - _v²_)." (Sample 003)
+
+## 5. RHETORICAL STRATEGIES (Specific, Actionable)
+
+### 1. Understated Authority
+
+**Name it:** "Understated Authority"
+
+**Describe it precisely:** Establish credibility through precision and fairness rather than assertion. Acknowledge limitations and alternative views. Let the strength of your reasoning create authority.
+
+**Show when to use it:** Use this strategy when arguing or explaining to build trust and credibility with your reader.
+
+**Provide tactical examples:**
+- "While the theory of relativity is complex, it has been consistently validated through numerous experiments."
+
+**Demonstrate it:**
+- "Both these expectations seem to me mistaken. They overlook the complexity of human behavior. Understanding this complexity is crucial for accurate analysis. Therefore, we must reconsider our assumptions."
+
+### 2. Clear and Explicit Analogies
+
+**Name it:** "Clear and Explicit Analogies"
+
+**Describe it precisely:** Introduce complex concepts using vivid, everyday analogies, followed by a detailed explanation of how the analogy applies to the concept.
+
+**Show when to use it:** Use this strategy when introducing new or abstract concepts to make them more relatable and understandable.
+
+**Provide tactical examples:**
+- "Think of the human body as a store of energy, like a mass of dynamite."
+
+**Demonstrate it:**
+- "A shock to a mass of dynamite produces quite different effects from an equal shock to a mass of steel..." (Sample 001)
+- "The particulars are to be conceived, not on the analogy of bricks in a building, but rather on the analogy of notes in a symphony." (Sample 004)
+
+## 6. INTEGRATION PRINCIPLES (How Techniques Combine)
+
+### 1. Economy × Complexity = Accessible Density
+
+**Name the interaction:** "Economy × Complexity = Accessible Density"
+
+**Explain the mechanism:** Lexical precision creates cognitive space for syntactic complexity. This achieves a balance between complexity and clarity.
+
+**Show the combined effect:** The text becomes dense with information but remains accessible and understandable.
+
+**Provide guidance:** Balance precise vocabulary with complex sentence structures to maintain clarity and depth.
+
+**Demonstrate it:**
+- "Physicists distinguish between macroscopic and microscopic equations..." (Sample 001)
+- "Now if _v_ is a small fraction of the velocity of light, _m_ + ½ _mv²_ is almost exactly equal to _m_ / √(1 - _v²_)." (Sample 003)
+
+### 2. Analogies × Balanced Sentence Structure = Clear Explanations
+
+**Name the interaction:** "Analogies × Balanced Sentence Structure = Clear Explanations"
+
+**Explain the mechanism:** Analogies are introduced using simple sentences for clarity, followed by complex sentences for detailed explanations.
+
+**Show the combined effect:** Complex concepts are presented clearly and accessibly.
+
+**Provide guidance:** Use analogies with balanced sentence structures to ensure clear and accessible explanations.
+
+**Demonstrate it:**
+- "A shock to a mass of dynamite produces quite different effects from an equal shock to a mass of steel..." (Sample 001)
+- "The particulars are to be conceived, not on the analogy of bricks in a building, but rather on the analogy of notes in a symphony." (Sample 004)
+
+## 7. CONTEXTUAL ADAPTATION (When to Vary)
+
+### 1. Technical vs. Accessible Topics
+
+**Name the dimension:** "Technical vs. Accessible Topics"
+
+**Describe how techniques adapt:** Use more Latinate polysyllables for technical topics and Germanic/Anglo-Saxon words for accessible topics.
+
+**Provide contrastive examples:**
+- Technical: "Physicists distinguish between macroscopic and microscopic equations..." (Sample 001)
+- Accessible: "When I first read Bergson's statement that the mathematician conceives the world after the analogy of a cinematograph..." (Sample 004)
+
+**Give decision rules:** Use technical vocabulary for academic or specialized topics to establish credibility. Use accessible vocabulary for general readership to engage and inform.
+
+### 2. Argumentative vs. Explanatory Texts
+
+**Name the dimension:** "Argumentative vs. Explanatory Texts"
+
+**Describe how techniques adapt:** Use shorter sentences for argumentative texts and longer sentences for explanatory texts.
+
+**Provide contrastive examples:**
+- Argumentative: "Both these expectations seem to me mistaken." (Sample 005)
+- Explanatory: "Now if _v_ is a small fraction of the velocity of light, _m_ + ½ _mv²_ is almost exactly equal to _m_ / √(1 - _v²_)." (Sample 003)
+
+**Give decision rules:** Use shorter sentences for clarity in arguments. Use longer sentences for detailed explanations.
+
+## 8. COMMON PITFALLS (What to Avoid)
+
+### CATEGORY 1: Over-Stylization Pitfalls
+
+#### 1. The Rhetorical Question Avalanche
+
+**Name it:** "The Rhetorical Question Avalanche"
+
+**Describe the overuse pattern:** Rhetorical questions appear in 50% of paragraphs, losing all emphasis value. They become tics, not tools.
+
+**Explain why overuse fails:** Overuse destroys the contrast that creates emphasis. Rhetorical questions should be used sparingly to maintain their impact.
+
+**Show the contrast:**
+- Bad example: "Is the theory of relativity complex? Is it groundbreaking? Does it revolutionize our understanding?"
+- Good example: "Is the theory of relativity complex? It has been consistently validated through numerous experiments."
+
+**Demonstrate it:**
+- "Is the theory of relativity complex? It has been consistently validated through numerous experiments."
+
+#### 2. The Metaphor Cascade
+
+**Name it:** "The Metaphor Cascade"
+
+**Describe the overuse pattern:** Metaphors are used in every sentence, diluting their impact and making the text seem flowery.
+
+**Explain why overuse fails:** Metaphors should be used selectively to create vivid images. Overuse makes them seem like ornamental decorations rather than meaningful tools.
+
+**Show the contrast:**
+- Bad example: "The theory of relativity is a complex web, a vast ocean of knowledge, a mountain to climb."
+- Good example: "The theory of relativity is a complex web of ideas that has revolutionized our understanding."
+
+**Demonstrate it:**
+- "The theory of relativity is a complex web of ideas that has revolutionized our understanding."
+
+#### 3. The Em-Dash Epidemic
+
+**Name it:** "The Em-Dash Epidemic"
+
+**Describe the overuse pattern:** Em-dashes are used in every sentence, creating a choppy and disjointed text.
+
+**Explain why overuse fails:** Em-dashes should be used sparingly to add clarity and emphasis. Overuse makes the text feel fragmented.
+
+**Show the contrast:**
+- Bad example: "The theory of relativity—complex and groundbreaking—has revolutionized our understanding—it is a web of ideas—that has changed physics."
+- Good example: "The theory of relativity—complex and groundbreaking—has revolutionized our understanding."
+
+**Demonstrate it:**
+- "The theory of relativity—complex and groundbreaking—has revolutionized our understanding."
+
+### CATEGORY 2: General Pitfalls
+
+#### 1. The Ornamentation Trap
+
+**Name it:** "The Ornamentation Trap"
+
+**Describe what to avoid:** Don't add adjectives or adverbs for 'color' or 'interest.' Every modifier must do semantic work.
+
+**Explain why it fails:** Adding unnecessary modifiers dilutes the meaning and makes the text seem overly ornate.
+
+**Show the contrast:**
+- Bad example: "The very complex theory of relativity is incredibly groundbreaking and extremely revolutionary."
+- Good example: "The theory of relativity is complex and groundbreaking."
+
+**Demonstrate it:**
+- "The theory of relativity is complex and groundbreaking."
+
+## 9. DIAGNOSTIC QUESTIONS (Self-Evaluation)
+
+### Dosage & Frequency Level
+
+1. Have you used rhetorical questions in more than 1 per 10 paragraphs? If yes, eliminate half.
+2. Are you using plain Anglo-Saxon vocabulary for at least 75% of your key terms?
+3. Does any stylistic feature feel like it's 'everywhere'? If yes, it's overused.
+
+### Sentence Level
+
+1. Could any sentence be simplified without loss of meaning?
+2. Are your main claims placed in 8-12 word independent clauses?
+3. Have you used active voice in approximately 80% of your explanatory sentences?
+
+### Word Level
+
+1. Have you used the shortest accurate word for each concept?
+2. Are you using Latinate polysyllables for 80% of your technical explanations?
+3. Have you avoided redundancy in your explanations?
+
+### Paragraph Level
+
+1. Does each paragraph have a clear anchor sentence?
+2. Have you used a mix of simple and complex sentences in your explanations?
+3. Are your paragraphs coherent and well-structured?
+
+### Rhetorical Level
+
+1. Have you established why the reader should trust this claim?
+2. Have you used clear and explicit analogies to explain complex concepts?
+3. Have you maintained a balance between active and passive voice?
+
+## 10. THE SYNTHESIS (Bringing It Together)
+
+The essential quality these techniques produce is clarity and depth in complex arguments. The foundational principles generate tactical techniques that enhance the text's precision and accessibility. The underlying philosophy is to balance complexity with clarity, ensuring that the reader is engaged and informed. This approach is distinctive because it combines technical precision with accessible explanations, making complex ideas relatable and understandable. The synthesis of these techniques creates a coherent and instructive document, enabling writers to achieve the same level of clarity and depth as the source texts.
