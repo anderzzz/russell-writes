@@ -1,0 +1,139 @@
+## TASK: FIELD GUIDE CONSTRUCTION
+
+You are integrating **three synthesized analyses** into a unified **recognition field guide** that will enable evaluation of passages for few-shot learning.
+
+The field guide serves one purpose: **help identify passages where this author's characteristic qualities are most densely present**.
+
+---
+
+## INPUT
+
+You have three Stage 2 syntheses:
+
+1. **Implied Author Synthesis**: The sensibility dimension
+2. **Decision Pattern Synthesis**: The craft dimension
+3. **Textural Synthesis**: The formal dimension
+
+Your task: Integrate these into a **unified guide** with recognition criteria and evaluation rubrics.
+
+---
+
+## OUTPUT STRUCTURE
+
+### PART 1: THE UNIFIED SENSIBILITY (400-500 words)
+
+Write an integrated description of **how this author writes** that synthesizes all three dimensions.
+
+This is not three separate summaries. It's a **unified portrait** showing how:
+- Sensibility manifests in decisions
+- Decisions are realized in texture
+- Texture enacts sensibility
+
+Address:
+- What is this author fundamentally *doing* when they write? (Arguing, explaining, discovering, persuading, clarifying?)
+- How do the three dimensions work together to achieve this?
+- What emerges from the combination that no single perspective captures?
+- What is the dominant quality: precision? momentum? accessibility? authority? Something else?
+
+This description should enable someone to **recognize this author's presence** even in unfamiliar passages.
+
+### PART 2: RECOGNITION CRITERIA
+
+Translate the three syntheses into **questions an evaluator can ask** when examining a passage.
+
+Organize by dimension:
+
+**A. SENSIBILITY MARKERS**
+Questions that probe whether the implied author's characteristic stance is present:
+- [5-7 specific questions]
+- Example: "Does the prose position the reader as an equal capable of following complex reasoning?"
+
+**B. DECISION MARKERS**
+Questions that probe whether characteristic compositional choices are being made:
+- [5-7 specific questions]
+- Example: "When introducing complex concepts, does the author provide concrete anchors before abstraction?"
+
+**C. TEXTURAL MARKERS**
+Questions that probe whether the characteristic prose texture is present:
+- [5-7 specific questions]
+- Example: "Do sentences place core claims in independent clauses with qualifications in subordinate positions?"
+
+**D. INTEGRATION MARKERS**
+Questions that probe whether sensibility, decisions, and texture are working together:
+- [3-5 specific questions]
+- Example: "Does the sentence structure enact the mode of thinking being described?"
+
+These questions will guide passage evaluation in Stage 4.
+
+### PART 3: DENSITY EVALUATION RUBRIC
+
+Construct a rubric for rating passages **1-5** based on density of characteristic qualities.
+
+For each level, describe what **presence or absence** of which qualities would place a passage there:
+
+**RATING 5: PARADIGMATIC**
+This passage could teach someone to recognize this author. Sensibility, decisions, and texture all present and integrated. [Specify what "all present and integrated" means for this author]
+
+**RATING 4: STRONGLY CHARACTERISTIC**
+Most signature elements present, integration strong. [Specify what elements must be present]
+
+**RATING 3: RECOGNIZABLY THIS AUTHOR**
+Enough markers to identify authorship, but some elements muted or missing. [Specify threshold]
+
+**RATING 2: WEAKLY CHARACTERISTIC**
+Occasional markers visible, but much could have been written by others. [Specify what's missing]
+
+**RATING 1: NOT USEFUL AS EXAMPLE**
+Author's distinctive qualities largely absent. May be atypical for this author or lack density. [Specify disqualifiers]
+
+The rubric should be **specific to this author** - not generic quality ratings, but presence/absence of *their* characteristic features.
+
+### PART 4: MASTER PASSAGE INDEX
+
+Compile **all passages flagged** across the Stage 1 and Stage 2 analyses:
+- Signature moments (from implied author analyses)
+- High-density decision passages (from decision analyses)
+- Texturally distinctive passages (from texture analyses)
+- Exemplary passages (from syntheses)
+
+For each passage:
+```
+SAMPLE: [sample_id]
+LOCATION: [paragraph range if specified]
+SOURCE: [Which analysis flagged it: implied_author, decision_pattern, textural, or synthesis]
+WHY FLAGGED: [Brief note on what it exemplifies]
+```
+
+Remove duplicates (same passage flagged by multiple analyses - note which ones).
+
+This index provides **seed candidates** for Stage 4 evaluation.
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Integration**: Part 1 must feel unified, not compartmentalized
+2. **Specificity**: Recognition criteria and rubric must be tailored to this author
+3. **Actionable**: Questions should be answerable; rubric levels should be distinguishable
+4. **Author-Agnostic**: Refer to "this author" throughout
+5. **Provenance**: Master index must reference source analyses
+
+---
+
+## STAGE 2 SYNTHESES TO INTEGRATE
+
+### IMPLIED AUTHOR SYNTHESIS
+
+{{ implied_author_synthesis }}
+
+---
+
+### DECISION PATTERN SYNTHESIS
+
+{{ decision_pattern_synthesis }}
+
+---
+
+### TEXTURAL SYNTHESIS
+
+{{ textural_synthesis }}

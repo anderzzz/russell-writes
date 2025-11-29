@@ -1,0 +1,125 @@
+## TASK: DECISION PATTERN SYNTHESIS
+
+You have **compositional decision analyses** from multiple texts by the same author. Your task is to synthesize these into a **map of the author's characteristic decision-making patterns**.
+
+This synthesis will form the **decision dimension** of the field guide used to evaluate passages for few-shot learning.
+
+---
+
+## INPUT
+
+You will receive decision pattern analyses from {{ decision_pattern_analyses|length }} separate texts.
+
+Each analysis identified:
+- Specific compositional problems faced
+- Choices made to solve them
+- Alternatives available
+- What each choice achieved
+
+Your task: Extract **patterns** - the recurring moves, the characteristic solutions, the fingerprints of this author's craft.
+
+---
+
+## OUTPUT STRUCTURE
+
+### PART 1: COMPOSITIONAL PROBLEM TAXONOMY
+
+Across all texts, what **types of compositional problems** recur for this author?
+
+Create a taxonomy of major problem categories. These might include:
+- Opening a text or major section
+- Introducing a complex concept
+- Making an abstract idea concrete
+- Handling objections or alternative views
+- Transitioning between major topics
+- Building an argument across paragraphs
+- Concluding or consolidating
+- Other patterns specific to this author
+
+List **5-8 problem types** with brief descriptions.
+
+### PART 2: CHARACTERISTIC SOLUTIONS
+
+For each problem type identified above, describe this author's **characteristic solution or solutions**.
+
+Format:
+```
+PROBLEM: [Type]
+CHARACTERISTIC APPROACH: [Not "they always do X" but "when facing this problem, they tend to... and variations seem governed by..."]
+LOGIC: [What this achieves, what it prioritizes, what it sacrifices]
+EXAMPLES: [Cite 2-3 instances across samples with brief quotes]
+```
+
+Show the **pattern**, not the rule. Authors aren't mechanical - capture their tendencies and what seems to govern variation.
+
+### PART 3: SIGNATURE MOVES
+
+Identify **4-6 "signature moves"** - compositional solutions so characteristic they function almost as fingerprints.
+
+A signature move is:
+- Specific enough to recognize
+- Frequent enough to be characteristic
+- Distinctive enough to distinguish this author from others
+- Described in **functional terms** (what it does) not just mechanical terms (how it's formatted)
+
+For each signature move:
+```
+MOVE: [Memorable label]
+SPECIFICATION: [What exactly happens]
+WHEN DEPLOYED: [Under what conditions]
+WHAT IT ACHIEVES: [Functional purpose]
+EXAMPLES: [2-3 instances across samples with quotes]
+```
+
+These signature moves will be used in Stage 4 to evaluate whether passages exhibit this author's characteristic decision patterns.
+
+### PART 4: ANTI-PATTERNS
+
+What does this author **characteristically NOT do**?
+
+Identify **3-5 compositional choices** that would be available and perhaps even conventional, but which this author consistently avoids or rarely uses.
+
+For each:
+- Describe the avoided pattern
+- Speculate briefly on why (based on what you know of their priorities)
+- Note if there are rare exceptions and what seems to justify them
+
+Example format:
+- **Avoided: Front-loading technical jargon**. This author introduces specialized terms gradually with context, avoiding dense technical openings even when addressing expert audiences. Rare exceptions occur when addressing urgent corrections to specialist discourse.
+
+### PART 5: HIGH-DENSITY PASSAGE INDEX
+
+Compile the **high-density passages** flagged across all individual analyses (passages where multiple decisions converge).
+
+Group them by **which compositional tasks** they most clearly exemplify.
+
+Format:
+```
+TASK: [e.g., "Introducing complex concepts"]
+- [sample_id], [location]: [brief description of what's demonstrated]
+- [sample_id], [location]: [brief description]
+```
+
+This index will help identify which passages to evaluate in Stage 4.
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Patterns, Not Rules**: Capture tendencies and governing conditions, not mechanical formulas
+2. **Cite Evidence**: Reference specific samples and quote passages
+3. **Functional Focus**: Always explain *what the decision achieves*, not just what it is
+4. **Author-Agnostic**: Refer to "this author" throughout
+
+---
+
+## DECISION PATTERN ANALYSES TO SYNTHESIZE
+
+{% for sample_id, analysis in decision_pattern_analyses.items() %}
+---
+**{{ sample_id|upper }}**
+
+{{ analysis }}
+
+
+{% endfor %}

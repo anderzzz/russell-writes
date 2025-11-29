@@ -1,0 +1,164 @@
+## TASK: PASSAGE EVALUATION FOR FEW-SHOT SUITABILITY
+
+You are evaluating a passage to determine its **suitability as a few-shot example** for teaching an AI to write in this author's manner.
+
+The evaluation uses the **field guide** (recognition criteria and density rubric) constructed from analyzing multiple texts by this author.
+
+---
+
+## EVALUATION PRINCIPLE
+
+A good few-shot example is **densely characteristic** - it exhibits this author's sensibility, decision patterns, and textural features in concentrated form.
+
+You're not evaluating quality or correctness. You're evaluating **density of recognizable authorial presence**.
+
+---
+
+## EVALUATION PROCEDURE
+
+### STEP 1: RECOGNITION CRITERIA ASSESSMENT
+
+Work through the **recognition criteria from the field guide** systematically.
+
+For each category (Sensibility, Decisions, Texture, Integration), assess whether and how strongly the passage exhibits the relevant markers.
+
+**For each marker category:**
+
+1. List the specific criteria (from field guide)
+2. Quote moments from the passage that demonstrate presence/absence
+3. Assess strength: **STRONG** / **MODERATE** / **WEAK** / **ABSENT**
+
+Example format:
+```
+CATEGORY: Sensibility Markers
+Criterion: "Does prose position reader as equal capable of following complex reasoning?"
+Evidence: [quote from passage]
+Assessment: STRONG - Reader assumed to grasp abstract concepts without over-explanation
+
+Criterion: [next criterion]
+...
+```
+
+Work through **all four categories**: Sensibility, Decisions, Texture, Integration.
+
+### STEP 2: DENSITY RATING
+
+Using the **rubric from the field guide**, assign a density rating **1-5**.
+
+Reference the rubric's criteria for each level and explain which level this passage reaches:
+
+**Your Rating: [1/2/3/4/5]**
+
+**Justification:**
+- Which qualities from the rubric are present?
+- Which are absent or weak?
+- Why this rating and not higher/lower?
+
+(2-3 paragraphs grounding your rating in the rubric's specific criteria)
+
+### STEP 3: COMPOSITIONAL TASK COVERAGE
+
+What **compositional tasks** does this passage demonstrate?
+
+Identify which of the author's characteristic decision patterns are visible here:
+- Introducing complex concepts?
+- Handling objections?
+- Transitioning between topics?
+- Making abstractions concrete?
+- Building arguments?
+- Other tasks identified in field guide?
+
+List tasks demonstrated and briefly note how (with quotes).
+
+This matters for **example set diversity** - we want sets that cover different compositional challenges.
+
+### STEP 4: TEACHING VALUE ASSESSMENT
+
+Beyond density, assess **pedagogical value**:
+
+**Self-Containment**
+- Can this passage be understood without extensive surrounding context?
+- Or does it depend heavily on what comes before/after?
+
+**Topic Generality**
+- Is the subject matter specific enough to show technique but general enough to transfer?
+- Or is it so specialized it might contaminate generation on other topics?
+
+**Transferability**
+- Are the qualities present here **teachable** - could an AI absorb and apply them?
+- Or are they somehow inimitable, context-specific?
+
+**Complexity Level**
+- Does this passage showcase the author's craft at a level that demonstrates key patterns?
+- Or is it either too simple (patterns not evident) or too complex (too many confounds)?
+
+Rate each factor: **HIGH** / **MODERATE** / **LOW**
+
+Provide brief justification for each.
+
+### STEP 5: SUMMARY RECOMMENDATION
+
+**Is this passage suitable as a few-shot example?**
+
+Answer: **YES** / **MAYBE** / **NO**
+
+**Summary Justification (3-5 sentences):**
+- Synthesize density rating + task coverage + teaching value
+- What would this passage contribute to a few-shot set?
+- Or if unsuitable, what disqualifies it?
+
+---
+
+## OUTPUT FORMAT
+
+Structure your evaluation clearly:
+
+```
+## PASSAGE EVALUATION
+
+**Source:** {{ source }}
+
+### RECOGNITION CRITERIA ASSESSMENT
+[Work through all criteria systematically]
+
+### DENSITY RATING
+**Rating:** [1-5]
+**Justification:** [...]
+
+### COMPOSITIONAL TASK COVERAGE
+[List tasks with evidence]
+
+### TEACHING VALUE ASSESSMENT
+- Self-Containment: [HIGH/MOD/LOW + why]
+- Topic Generality: [HIGH/MOD/LOW + why]
+- Transferability: [HIGH/MOD/LOW + why]
+- Complexity Level: [HIGH/MOD/LOW + why]
+
+### SUMMARY RECOMMENDATION
+**Suitable as Few-Shot Example:** [YES/MAYBE/NO]
+**Justification:** [...]
+```
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Use the Field Guide**: All assessments must reference specific criteria from the guide
+2. **Quote Evidence**: Ground every judgment in quoted passages
+3. **Distinguish Rating from Quality**: High-quality prose ≠ high-density presence of author's patterns
+4. **Be Selective**: Not every passage deserves a 4-5 rating; be discerning
+5. **Think Pedagogically**: Consider what an AI would learn from this example
+
+---
+
+## FIELD GUIDE
+
+{{ field_guide }}
+
+---
+
+## PASSAGE TO EVALUATE
+
+**Source:** {{ source }}
+
+{{ passage }}

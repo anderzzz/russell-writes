@@ -1,0 +1,133 @@
+## TASK: TEXTURAL SYNTHESIS
+
+You have **functional texture analyses** from multiple texts by the same author. Your task is to synthesize these into a description of the author's **characteristic prose texture** - how they build sentences, choose words, and construct paragraphs.
+
+This synthesis will form the **textural dimension** of the field guide used to evaluate passages for few-shot learning.
+
+---
+
+## INPUT
+
+You will receive functional texture analyses from {{ textural_analyses|length }} separate texts.
+
+Each analysis examined:
+- Sentence-level patterns and their functions
+- Lexical patterns and precision-accessibility balance
+- Rhythmic patterns and emphasis
+- Paragraph-level structure
+- How texture serves purpose
+
+Your task: Synthesize into a **unified description of this author's characteristic texture**.
+
+---
+
+## OUTPUT STRUCTURE
+
+### PART 1: SENTENCE ARCHITECTURE
+
+Describe this author's **characteristic sentence**.
+
+Not the average sentence length or a formula, but the **feel of how they build sentences**. Address:
+
+**Structural Character**
+- How is complexity typically managed? (Front-loaded, back-loaded, distributed?)
+- What is the relationship between main clauses and subordination?
+- How does structure create rhythm or emphasis?
+
+**Variation Patterns**
+- When does the author deviate from their baseline?
+- What triggers longer or shorter sentences?
+- How does variation serve function?
+
+**Exemplary Sentences**
+Identify **2-3 sentences across the corpus** that epitomize this sentence architecture.
+
+For each: Quote it and explain what makes it characteristically theirs.
+
+### PART 2: LEXICAL CHARACTER
+
+Describe this author's **characteristic word choice**. Address:
+
+**Register and Range**
+- What is the dominant register? How consistent or varied?
+- How is the balance between precision and accessibility achieved?
+
+**Vocabulary Handling**
+- How is technical or specialized vocabulary introduced and used?
+- Preferences in verb types (active/passive, dynamic/stative)?
+- Characteristic use of concrete versus abstract language?
+
+**Notable Preferences or Aversions**
+- Are there word patterns that recur? (Certain qualifiers, intensifiers, connectors?)
+- Are there patterns this author consistently avoids?
+
+### PART 3: PARAGRAPH SHAPE
+
+Describe this author's **characteristic paragraph**. Address:
+
+**Opening Moves**
+- How do paragraphs typically begin?
+- Is there a characteristic first-sentence pattern?
+
+**Internal Development**
+- What is the dominant development pattern?
+- Examples: Claim → elaboration? Question → answer? Cumulative build?
+
+**Closing Moves**
+- How do paragraphs typically end?
+- Do they close firmly, pivot to the next topic, or trail off?
+
+**Sequential Patterns**
+- How does the author construct multi-paragraph sequences?
+- How do paragraphs relate to each other (contrast, build, circle back)?
+
+### PART 4: TEXTURE-FUNCTION INTEGRATION
+
+**This is the synthesis of synthesis:**
+
+How do the textural features **work together** to serve this author's purposes?
+
+Connect the formal patterns to:
+- The implied author's sensibility (from Stage 2A)
+- The characteristic decision patterns (from Stage 2B)
+
+Show how **texture enacts stance**:
+- Does sentence structure embody modes of thinking?
+- Does vocabulary choice reflect relationship to reader?
+- Does paragraph shape serve argumentative or expository strategy?
+
+Write 2-3 paragraphs showing these connections.
+
+### PART 5: TEXTURALLY EXEMPLARY PASSAGES
+
+Compile passages flagged across analyses as **texturally distinctive**.
+
+For each, provide:
+- Sample ID and location
+- The passage (quoted)
+- Brief annotation: What textural features converge here? What makes it exemplary?
+
+Group by **textural function** if patterns emerge (e.g., passages that exemplify rhythmic emphasis vs. passages that exemplify lexical precision).
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Describe Feel, Not Metrics**: Capture how the prose moves and sounds, not just counts
+2. **Function Over Form**: Always explain what textural choices achieve
+3. **Quote Evidence**: Ground descriptions in specific examples
+4. **Integration**: Show how texture, sensibility, and decisions cohere
+5. **Author-Agnostic**: Refer to "this author" throughout
+
+---
+
+## TEXTURAL ANALYSES TO SYNTHESIZE
+
+{% for sample_id, analysis in textural_analyses.items() %}
+---
+**{{ sample_id|upper }}**
+
+{{ analysis }}
+
+
+{% endfor %}

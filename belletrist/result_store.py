@@ -19,7 +19,7 @@ analysis pipeline involves:
 - Partial re-runs (e.g., re-do synthesis without re-analyzing samples)
 - Validation that all required analyses completed before proceeding
 
-## Three-Tier Data Model
+## Four-Tier Data Model
 
 The schema mirrors the workflow's natural hierarchy:
 
@@ -37,9 +37,16 @@ The schema mirrors the workflow's natural hierarchy:
 **Tier 3: Syntheses** (multi-sample aggregations)
 - Cross-text synthesis: aggregates multiple per-sample integrations
 - Principles guide: converts synthesis into prescriptive style instructions
+- Field guide: unified recognition criteria for passage evaluation
 - Auto-generated IDs prevent naming collisions (e.g., 'cross_text_synthesis_001')
 - Parent linkage: principles_guide references its parent cross_text_synthesis
 - Full provenance: tracks which samples/analyses contributed to each synthesis
+
+**Tier 4: Passage Evaluations & Example Sets** (corpus mining)
+- Passage evaluations: density ratings (1-5) of passages using field guide rubric
+- Passage metadata: tasks demonstrated, techniques present, learning value
+- Example sets: curated collections of high-density passages for few-shot learning
+- Enables transition from analytical extraction to tacit transmission via examples
 
 ## Key Design Decisions
 
@@ -67,13 +74,17 @@ Every sample tracks exact source location. Every analysis tracks model used.
 Every synthesis tracks contributing samples/analyses + parent linkage.
 This enables full audit trails: "Which text produced this style principle?"
 
-## SQLite Schema (5 Tables)
+## SQLite Schema (9 Tables)
 
-samples:          sample_id (PK) | text | file_index | paragraph_start | paragraph_end
-analyses:         sample_id (FK) | analyst (PK) | output | model
-syntheses:        synthesis_id (PK) | synthesis_type | output | model | created_at | parent_id (FK) | config_json
-synthesis_samples: synthesis_id (FK) | sample_id (FK) | analyst (FK)
-synthesis_metadata: synthesis_id (FK) | num_samples | sample_ids_json | is_homogeneous_model | models_json
+samples:             sample_id (PK) | text | file_index | paragraph_start | paragraph_end
+analyses:            sample_id (FK) | analyst (PK) | output | model
+syntheses:           synthesis_id (PK) | synthesis_type | output | model | created_at | parent_id (FK) | config_json
+synthesis_samples:   synthesis_id (FK) | sample_id (FK) | analyst (FK)
+synthesis_metadata:  synthesis_id (FK) | num_samples | sample_ids_json | is_homogeneous_model | models_json
+passage_evaluations: evaluation_id (PK) | sample_id (FK) | paragraph_range | density_rating | task_coverage | teaching_value | recommendation | evaluator_model | field_guide_id (FK) | created_at
+passage_metadata:    evaluation_id (PK/FK) | tasks_json | techniques_json | difficulty_level | learning_value
+example_sets:        set_id (PK) | set_name | description | purpose | field_guide_id (FK) | created_at | curator_model
+example_set_members: set_id (FK) | evaluation_id (FK) | position
 
 ## Usage Pattern
 
@@ -193,7 +204,15 @@ class ResultStore:
         self.conn.execute("""
             CREATE TABLE IF NOT EXISTS syntheses (
                 synthesis_id TEXT PRIMARY KEY,
-                synthesis_type TEXT NOT NULL CHECK(synthesis_type IN ('cross_text_synthesis', 'principles_guide')),
+                synthesis_type TEXT NOT NULL CHECK(synthesis_type IN (
+                    'cross_text_synthesis',
+                    'principles_guide',
+                    'implied_author_synthesis',
+                    'decision_pattern_synthesis',
+                    'textural_synthesis',
+                    'field_guide',
+                    'example_set'
+                )),
                 output TEXT NOT NULL,
                 model TEXT NOT NULL,
                 created_at TEXT NOT NULL,
@@ -220,6 +239,55 @@ class ResultStore:
                 is_homogeneous_model INTEGER NOT NULL,
                 models_json TEXT NOT NULL,
                 FOREIGN KEY (synthesis_id) REFERENCES syntheses(synthesis_id) ON DELETE CASCADE
+            )
+        """)
+        # Passage evaluation tables (Tier 4)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS passage_evaluations (
+                evaluation_id TEXT PRIMARY KEY,
+                sample_id TEXT NOT NULL,
+                paragraph_range TEXT,
+                density_rating INTEGER CHECK(density_rating BETWEEN 1 AND 5),
+                task_coverage TEXT,
+                teaching_value TEXT,
+                recommendation INTEGER CHECK(recommendation IN (0, 1)),
+                evaluator_model TEXT NOT NULL,
+                field_guide_id TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (sample_id) REFERENCES samples(sample_id),
+                FOREIGN KEY (field_guide_id) REFERENCES syntheses(synthesis_id)
+            )
+        """)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS passage_metadata (
+                evaluation_id TEXT PRIMARY KEY,
+                tasks_json TEXT,
+                techniques_json TEXT,
+                difficulty_level TEXT CHECK(difficulty_level IN ('beginner', 'intermediate', 'advanced')),
+                learning_value TEXT,
+                FOREIGN KEY (evaluation_id) REFERENCES passage_evaluations(evaluation_id) ON DELETE CASCADE
+            )
+        """)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS example_sets (
+                set_id TEXT PRIMARY KEY,
+                set_name TEXT NOT NULL UNIQUE,
+                description TEXT,
+                purpose TEXT,
+                field_guide_id TEXT,
+                created_at TEXT NOT NULL,
+                curator_model TEXT NOT NULL,
+                FOREIGN KEY (field_guide_id) REFERENCES syntheses(synthesis_id)
+            )
+        """)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS example_set_members (
+                set_id TEXT NOT NULL,
+                evaluation_id TEXT NOT NULL,
+                position INTEGER,
+                PRIMARY KEY (set_id, evaluation_id),
+                FOREIGN KEY (set_id) REFERENCES example_sets(set_id) ON DELETE CASCADE,
+                FOREIGN KEY (evaluation_id) REFERENCES passage_evaluations(evaluation_id) ON DELETE CASCADE
             )
         """)
         self.conn.commit()
@@ -417,7 +485,7 @@ class ResultStore:
         analyses = self.get_all_analyses(sample_id)
         return all(analyst in analyses for analyst in required_analysts)
 
-    def reset(self, scope: Literal['all', 'analyses_and_syntheses', 'syntheses_only'] = 'all'):
+    def reset(self, scope: Literal['all', 'analyses_and_syntheses', 'syntheses_only', 'passage_evaluations_only'] = 'all'):
         """Clear data from the store with hierarchical scope control.
 
         The data has a clear dependency hierarchy:
@@ -430,6 +498,13 @@ class ResultStore:
             syntheses (can have parent_synthesis_id FK to itself)
               ↓
             synthesis_metadata (depends on syntheses via FK)
+              ↓
+            passage_evaluations (depends on samples and field_guide syntheses)
+              ↓
+            passage_metadata (depends on passage_evaluations via FK)
+            example_set_members (junction: depends on example_sets and passage_evaluations)
+              ↓
+            example_sets (can depend on field_guide syntheses)
 
         Valid reset operations must respect this hierarchy - you cannot delete
         upstream data (e.g., samples) while preserving downstream data (e.g., syntheses)
@@ -437,9 +512,10 @@ class ResultStore:
 
         Args:
             scope: Reset scope controlling which tables to clear:
-                - 'all': Delete everything (samples, analyses, syntheses)
-                - 'analyses_and_syntheses': Keep samples, delete analyses + syntheses
-                - 'syntheses_only': Keep samples + analyses, delete only syntheses
+                - 'all': Delete everything (samples, analyses, syntheses, evaluations, sets)
+                - 'analyses_and_syntheses': Keep samples, delete analyses + syntheses + evaluations + sets
+                - 'syntheses_only': Keep samples + analyses, delete syntheses + evaluations + sets
+                - 'passage_evaluations_only': Keep samples + analyses + syntheses, delete evaluations + sets
 
         Warning:
             This operation is irreversible. All data in the selected scope
@@ -447,6 +523,7 @@ class ResultStore:
 
         Design Notes:
             - Deletion order matters: must delete child tables before parents
+            - passage_metadata and example_set_members have ON DELETE CASCADE
             - synthesis_samples and synthesis_metadata have ON DELETE CASCADE,
               so they're automatically cleaned when syntheses are deleted
             - Cannot delete samples while keeping analyses (would violate FKs)
@@ -454,19 +531,33 @@ class ResultStore:
         """
         if scope == 'all':
             # Delete everything in reverse dependency order
-            # synthesis_metadata and synthesis_samples auto-cascade
+            # Cascading deletes handle: passage_metadata, example_set_members,
+            # synthesis_metadata, synthesis_samples
+            self.conn.execute("DELETE FROM example_sets")
+            self.conn.execute("DELETE FROM passage_evaluations")
             self.conn.execute("DELETE FROM syntheses")
             self.conn.execute("DELETE FROM analyses")
             self.conn.execute("DELETE FROM samples")
         elif scope == 'analyses_and_syntheses':
             # Keep samples, delete everything downstream
+            self.conn.execute("DELETE FROM example_sets")
+            self.conn.execute("DELETE FROM passage_evaluations")
             self.conn.execute("DELETE FROM syntheses")
             self.conn.execute("DELETE FROM analyses")
         elif scope == 'syntheses_only':
-            # Keep samples and analyses, delete only syntheses
+            # Keep samples and analyses, delete syntheses and downstream
+            self.conn.execute("DELETE FROM example_sets")
+            self.conn.execute("DELETE FROM passage_evaluations")
             self.conn.execute("DELETE FROM syntheses")
+        elif scope == 'passage_evaluations_only':
+            # Keep samples, analyses, and syntheses; delete only passage evaluations and example sets
+            self.conn.execute("DELETE FROM example_sets")
+            self.conn.execute("DELETE FROM passage_evaluations")
         else:
-            raise ValueError(f"Invalid scope: {scope}. Must be 'all', 'analyses_and_syntheses', or 'syntheses_only'")
+            raise ValueError(
+                f"Invalid scope: {scope}. Must be 'all', 'analyses_and_syntheses', "
+                f"'syntheses_only', or 'passage_evaluations_only'"
+            )
 
         self.conn.commit()
 
@@ -499,7 +590,15 @@ class ResultStore:
 
     def save_synthesis(
         self,
-        synthesis_type: Literal['cross_text_synthesis', 'principles_guide'],
+        synthesis_type: Literal[
+            'cross_text_synthesis',
+            'principles_guide',
+            'implied_author_synthesis',
+            'decision_pattern_synthesis',
+            'textural_synthesis',
+            'field_guide',
+            'example_set'
+        ],
         output: str,
         model: str,
         sample_contributions: list[tuple[str, str]],
@@ -820,6 +919,425 @@ class ResultStore:
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(header)
             f.write(synthesis['output'])
+
+    # =========================================================================
+    # Passage Evaluation Methods (Tier 4)
+    # =========================================================================
+
+    def _get_next_passage_eval_id(self) -> str:
+        """Generate next passage evaluation ID.
+
+        Returns:
+            Auto-generated ID like 'passage_eval_001'
+        """
+        row = self.conn.execute("""
+            SELECT evaluation_id FROM passage_evaluations
+            ORDER BY evaluation_id DESC
+            LIMIT 1
+        """).fetchone()
+
+        if row:
+            last_id = row['evaluation_id']
+            counter = int(last_id.split('_')[-1])
+            next_counter = counter + 1
+        else:
+            next_counter = 1
+
+        return f"passage_eval_{next_counter:03d}"
+
+    def _get_next_example_set_id(self) -> str:
+        """Generate next example set ID.
+
+        Returns:
+            Auto-generated ID like 'example_set_001'
+        """
+        row = self.conn.execute("""
+            SELECT set_id FROM example_sets
+            ORDER BY set_id DESC
+            LIMIT 1
+        """).fetchone()
+
+        if row:
+            last_id = row['set_id']
+            counter = int(last_id.split('_')[-1])
+            next_counter = counter + 1
+        else:
+            next_counter = 1
+
+        return f"example_set_{next_counter:03d}"
+
+    def save_passage_evaluation(
+        self,
+        sample_id: str,
+        density_rating: int,
+        task_coverage: str,
+        teaching_value: str,
+        recommendation: bool,
+        model: str,
+        field_guide_id: Optional[str] = None,
+        paragraph_range: Optional[str] = None
+    ) -> str:
+        """Save a passage evaluation with auto-generated ID.
+
+        Args:
+            sample_id: ID of the sample being evaluated
+            density_rating: Density rating from 1-5
+            task_coverage: Tasks demonstrated (text or JSON)
+            teaching_value: Qualitative assessment
+            recommendation: Boolean indicating suitability as example
+            model: Model used for evaluation
+            field_guide_id: Optional FK to field guide synthesis
+            paragraph_range: Optional paragraph range (e.g., "5-7")
+
+        Returns:
+            Generated evaluation_id
+
+        Raises:
+            ValueError: If sample_id doesn't exist or rating invalid
+        """
+        # Validate sample exists
+        if not self.get_sample(sample_id):
+            raise ValueError(
+                f"Sample '{sample_id}' not found. Save sample first with save_sample()."
+            )
+
+        # Validate field guide exists if specified
+        if field_guide_id:
+            guide = self.get_synthesis(field_guide_id)
+            if not guide:
+                raise ValueError(f"Field guide '{field_guide_id}' not found")
+
+        # Validate rating
+        if not (1 <= density_rating <= 5):
+            raise ValueError(f"Density rating must be 1-5, got {density_rating}")
+
+        # Generate ID
+        evaluation_id = self._get_next_passage_eval_id()
+
+        # Save evaluation
+        created_at = datetime.now().isoformat()
+        self.conn.execute("""
+            INSERT INTO passage_evaluations
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            evaluation_id,
+            sample_id,
+            paragraph_range,
+            density_rating,
+            task_coverage,
+            teaching_value,
+            1 if recommendation else 0,
+            model,
+            field_guide_id,
+            created_at
+        ))
+
+        self.conn.commit()
+        return evaluation_id
+
+    def get_passage_evaluation(self, evaluation_id: str) -> Optional[dict]:
+        """Retrieve a passage evaluation by ID.
+
+        Args:
+            evaluation_id: Evaluation identifier
+
+        Returns:
+            Dictionary with evaluation data or None if not found
+        """
+        row = self.conn.execute("""
+            SELECT evaluation_id, sample_id, paragraph_range, density_rating,
+                   task_coverage, teaching_value, recommendation, evaluator_model,
+                   field_guide_id, created_at
+            FROM passage_evaluations
+            WHERE evaluation_id=?
+        """, (evaluation_id,)).fetchone()
+
+        if not row:
+            return None
+
+        return {
+            'evaluation_id': row['evaluation_id'],
+            'sample_id': row['sample_id'],
+            'paragraph_range': row['paragraph_range'],
+            'density_rating': row['density_rating'],
+            'task_coverage': row['task_coverage'],
+            'teaching_value': row['teaching_value'],
+            'recommendation': bool(row['recommendation']),
+            'evaluator_model': row['evaluator_model'],
+            'field_guide_id': row['field_guide_id'],
+            'created_at': row['created_at']
+        }
+
+    def list_passage_evaluations(self) -> list[str]:
+        """Get all passage evaluation IDs in creation order.
+
+        Returns:
+            List of evaluation IDs
+        """
+        rows = self.conn.execute("""
+            SELECT evaluation_id FROM passage_evaluations
+            ORDER BY created_at
+        """).fetchall()
+
+        return [row['evaluation_id'] for row in rows]
+
+    def is_passage_evaluated(self, sample_id: str) -> bool:
+        """Check if a passage evaluation exists for a sample.
+
+        Args:
+            sample_id: Sample identifier
+
+        Returns:
+            True if evaluation exists, False otherwise
+        """
+        row = self.conn.execute("""
+            SELECT 1 FROM passage_evaluations
+            WHERE sample_id=?
+            LIMIT 1
+        """, (sample_id,)).fetchone()
+
+        return row is not None
+
+    def get_passages_by_density(self, min_rating: int) -> list[dict]:
+        """Get passage evaluations with rating >= min_rating.
+
+        Args:
+            min_rating: Minimum density rating (1-5)
+
+        Returns:
+            List of evaluation dicts sorted by rating (highest first)
+        """
+        rows = self.conn.execute("""
+            SELECT evaluation_id, sample_id, paragraph_range, density_rating,
+                   task_coverage, teaching_value, recommendation, evaluator_model,
+                   field_guide_id, created_at
+            FROM passage_evaluations
+            WHERE density_rating >= ?
+            ORDER BY density_rating DESC, created_at
+        """, (min_rating,)).fetchall()
+
+        return [{
+            'evaluation_id': row['evaluation_id'],
+            'sample_id': row['sample_id'],
+            'paragraph_range': row['paragraph_range'],
+            'density_rating': row['density_rating'],
+            'task_coverage': row['task_coverage'],
+            'teaching_value': row['teaching_value'],
+            'recommendation': bool(row['recommendation']),
+            'evaluator_model': row['evaluator_model'],
+            'field_guide_id': row['field_guide_id'],
+            'created_at': row['created_at']
+        } for row in rows]
+
+    def save_passage_metadata(
+        self,
+        evaluation_id: str,
+        tasks: Optional[list[str]] = None,
+        techniques: Optional[list[str]] = None,
+        difficulty_level: Optional[Literal['beginner', 'intermediate', 'advanced']] = None,
+        learning_value: Optional[str] = None
+    ):
+        """Save metadata for a passage evaluation.
+
+        Args:
+            evaluation_id: Evaluation identifier
+            tasks: List of tasks demonstrated
+            techniques: List of techniques present
+            difficulty_level: Difficulty classification
+            learning_value: Description of learning value
+
+        Raises:
+            ValueError: If evaluation_id doesn't exist
+        """
+        # Validate evaluation exists
+        if not self.get_passage_evaluation(evaluation_id):
+            raise ValueError(f"Evaluation '{evaluation_id}' not found")
+
+        # Serialize lists to JSON
+        tasks_json = json.dumps(tasks) if tasks else None
+        techniques_json = json.dumps(techniques) if techniques else None
+
+        self.conn.execute("""
+            INSERT OR REPLACE INTO passage_metadata
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            evaluation_id,
+            tasks_json,
+            techniques_json,
+            difficulty_level,
+            learning_value
+        ))
+
+        self.conn.commit()
+
+    def get_passage_metadata(self, evaluation_id: str) -> Optional[dict]:
+        """Retrieve metadata for a passage evaluation.
+
+        Args:
+            evaluation_id: Evaluation identifier
+
+        Returns:
+            Dictionary with metadata or None if not found
+        """
+        row = self.conn.execute("""
+            SELECT evaluation_id, tasks_json, techniques_json, difficulty_level, learning_value
+            FROM passage_metadata
+            WHERE evaluation_id=?
+        """, (evaluation_id,)).fetchone()
+
+        if not row:
+            return None
+
+        return {
+            'evaluation_id': row['evaluation_id'],
+            'tasks': json.loads(row['tasks_json']) if row['tasks_json'] else None,
+            'techniques': json.loads(row['techniques_json']) if row['techniques_json'] else None,
+            'difficulty_level': row['difficulty_level'],
+            'learning_value': row['learning_value']
+        }
+
+    def save_example_set(
+        self,
+        name: str,
+        description: str,
+        purpose: str,
+        passage_ids: list[str],
+        model: str,
+        field_guide_id: Optional[str] = None
+    ) -> str:
+        """Save an example set with auto-generated ID.
+
+        Args:
+            name: Unique name for the set
+            description: Description of the set
+            purpose: Purpose (e.g., "argumentative", "expository")
+            passage_ids: List of evaluation_ids to include
+            model: Model used to curate the set
+            field_guide_id: Optional FK to field guide
+
+        Returns:
+            Generated set_id
+
+        Raises:
+            ValueError: If name already exists or passage_ids invalid
+        """
+        # Validate all passage IDs exist
+        for eval_id in passage_ids:
+            if not self.get_passage_evaluation(eval_id):
+                raise ValueError(f"Passage evaluation '{eval_id}' not found")
+
+        # Validate field guide exists if specified
+        if field_guide_id:
+            guide = self.get_synthesis(field_guide_id)
+            if not guide:
+                raise ValueError(f"Field guide '{field_guide_id}' not found")
+
+        # Generate ID
+        set_id = self._get_next_example_set_id()
+
+        # Save example set
+        created_at = datetime.now().isoformat()
+        self.conn.execute("""
+            INSERT INTO example_sets
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            set_id,
+            name,
+            description,
+            purpose,
+            field_guide_id,
+            created_at,
+            model
+        ))
+
+        # Save set members with positions
+        for position, eval_id in enumerate(passage_ids, 1):
+            self.conn.execute("""
+                INSERT INTO example_set_members
+                VALUES (?, ?, ?)
+            """, (set_id, eval_id, position))
+
+        self.conn.commit()
+        return set_id
+
+    def get_example_set(self, set_id: str) -> Optional[dict]:
+        """Retrieve an example set by ID (without passages).
+
+        Args:
+            set_id: Set identifier
+
+        Returns:
+            Dictionary with set data or None if not found
+        """
+        row = self.conn.execute("""
+            SELECT set_id, set_name, description, purpose, field_guide_id, created_at, curator_model
+            FROM example_sets
+            WHERE set_id=?
+        """, (set_id,)).fetchone()
+
+        if not row:
+            return None
+
+        # Get member evaluation IDs
+        member_rows = self.conn.execute("""
+            SELECT evaluation_id FROM example_set_members
+            WHERE set_id=?
+            ORDER BY position
+        """, (set_id,)).fetchall()
+
+        return {
+            'set_id': row['set_id'],
+            'name': row['set_name'],
+            'description': row['description'],
+            'purpose': row['purpose'],
+            'field_guide_id': row['field_guide_id'],
+            'created_at': row['created_at'],
+            'curator_model': row['curator_model'],
+            'evaluation_ids': [r['evaluation_id'] for r in member_rows]
+        }
+
+    def get_example_set_with_passages(self, set_id: str) -> Optional[dict]:
+        """Retrieve an example set with full passage data.
+
+        Args:
+            set_id: Set identifier
+
+        Returns:
+            Dictionary with set data and passages, or None if not found
+        """
+        example_set = self.get_example_set(set_id)
+        if not example_set:
+            return None
+
+        # Get full passage data for each member
+        passages = []
+        for eval_id in example_set['evaluation_ids']:
+            evaluation = self.get_passage_evaluation(eval_id)
+            if evaluation:
+                # Also get the sample text
+                sample = self.get_sample(evaluation['sample_id'])
+                evaluation['text'] = sample['text'] if sample else None
+                # Get metadata if exists
+                metadata = self.get_passage_metadata(eval_id)
+                if metadata:
+                    evaluation['metadata'] = metadata
+                passages.append(evaluation)
+
+        example_set['passages'] = passages
+        return example_set
+
+    def list_example_sets(self) -> list[str]:
+        """Get all example set IDs in creation order.
+
+        Returns:
+            List of set IDs
+        """
+        rows = self.conn.execute("""
+            SELECT set_id FROM example_sets
+            ORDER BY created_at
+        """).fetchall()
+
+        return [row['set_id'] for row in rows]
 
     def close(self):
         """Close database connection."""

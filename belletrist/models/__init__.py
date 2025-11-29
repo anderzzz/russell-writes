@@ -39,6 +39,26 @@ from belletrist.models.prompt_models import (
     StyleReconstructionInstructionsConfig,
     StyleJudgeComparativeConfig,
 )
+from belletrist.models.author_modeling_models import (
+    # Stage 1: Analytical Mining
+    ImpliedAuthorConfig,
+    DecisionPatternConfig,
+    FunctionalTextureConfig,
+
+    # Stage 2: Cross-Text Synthesis
+    ImpliedAuthorSynthesisConfig,
+    DecisionPatternSynthesisConfig,
+    TexturalSynthesisConfig,
+
+    # Stage 3: Field Guide Construction
+    FieldGuideConstructionConfig,
+
+    # Stage 4: Corpus Mining
+    PassageEvaluationConfig,
+
+    # Stage 5: Example Set Construction
+    ExampleSetConstructionConfig,
+)
 
 __all__ = [
     # LLM core
@@ -65,5 +85,21 @@ __all__ = [
     "StyleFlatteningConfig", "StyleFlatteningAggressiveConfig",
     "StyleReconstructionGenericConfig", "StyleReconstructionFewShotConfig",
     "StyleReconstructionAuthorConfig", "StyleReconstructionInstructionsConfig",
-    "StyleJudgeComparativeConfig"
+    "StyleJudgeComparativeConfig",
+
+    # Author modeling - Stage 1
+    "ImpliedAuthorConfig", "DecisionPatternConfig", "FunctionalTextureConfig",
+
+    # Author modeling - Stage 2
+    "ImpliedAuthorSynthesisConfig", "DecisionPatternSynthesisConfig",
+    "TexturalSynthesisConfig",
+
+    # Author modeling - Stage 3
+    "FieldGuideConstructionConfig",
+
+    # Author modeling - Stage 4
+    "PassageEvaluationConfig",
+
+    # Author modeling - Stage 5
+    "ExampleSetConstructionConfig",
 ]

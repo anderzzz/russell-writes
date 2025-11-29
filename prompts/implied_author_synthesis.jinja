@@ -1,0 +1,115 @@
+## TASK: IMPLIED AUTHOR SYNTHESIS
+
+You have **implied author portraits** derived from multiple texts by the same author. Your task is to synthesize these into a **unified portrait** that captures what is stable across texts while acknowledging variation.
+
+This synthesis will form the **sensibility dimension** of the field guide used to evaluate passages for few-shot learning.
+
+---
+
+## INPUT
+
+You will receive implied author analyses from {{ implied_author_analyses|length }} separate texts.
+
+Each analysis constructed a portrait based on:
+- Relationship to material
+- Relationship to reader
+- Relationship to uncertainty
+- Relationship to writing itself
+
+Your task: Find what remains constant, note meaningful variation, and synthesize into a unified understanding.
+
+---
+
+## OUTPUT STRUCTURE
+
+### PART 1: THE STABLE CORE
+
+What remains **constant across all texts**?
+
+Address each dimension:
+
+**Fundamental Stance Toward Ideas and Inquiry**
+- How does this author consistently engage with their subject matter?
+- What is their baseline relationship to complexity, discovery, mastery?
+
+**Characteristic Relationship to Readers**
+- Who do they consistently write for or to?
+- What level of knowledge/sophistication do they assume?
+- What is their characteristic tone - collegial, pedagogical, other?
+
+**Handling of Certainty and Uncertainty**
+- Where are they consistently confident? Where consistently provisional?
+- How do they characteristically signal qualification or assertion?
+
+**Attitude Toward the Prose Itself**
+- Is there consistent pleasure in language, or consistent transparency?
+- Do they reliably ornament or reliably constrain?
+
+For each element of the stable core, **note which passages across the corpus most vividly exemplify it** (reference sample IDs and brief quotes).
+
+### PART 2: PRODUCTIVE TENSIONS
+
+Where does the author vary? Identify **dimensions of range** within the sensibility - not contradictions, but the spectrum along which they move.
+
+Examples of productive tensions:
+- Sometimes more playful, sometimes more severe
+- Sometimes more intimate with reader, sometimes more public/formal
+- Sometimes discovering, sometimes instructing
+
+For each tension:
+- Describe the range
+- Note what seems to govern when they move toward one pole vs. another
+- Cite examples from different samples
+
+If the author shows no meaningful variation (perfectly consistent), note this - but look carefully first.
+
+### PART 3: THE SYNTHETIC PORTRAIT
+
+Write a **300-400 word** portrait of this implied author that integrates your findings.
+
+Write as you would describe a **mind you have come to know** through multiple encounters:
+- Its temperament
+- Its values
+- Its characteristic ways of engaging with ideas and readers
+- Its range and consistency
+
+This portrait should be rich enough that someone reading it could recognize this author in a new, unsigned passage.
+
+**Style**: Descriptive and specific, not generic. Show the sensibility through precise observation.
+
+### PART 4: RECOGNITION MARKERS
+
+Based on your synthesis, list **5-7 telltale signs** of this author's presence.
+
+These should be **specific enough to guide recognition** but not so narrow as to be reductive.
+
+Format each as:
+- **[Marker]**: [How it manifests / what to look for]
+
+Example format (adapt to this author):
+- **Qualified Authority**: Asserts core claims firmly but immediately acknowledges limits; "X is true, though Y remains unclear"
+- **Reader as Equal**: Assumes reader can follow complex reasoning; explains technical terms but not basic logic
+
+These markers will be used in Stage 4 to evaluate whether passages exhibit this author's characteristic sensibility.
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Quote Evidence**: Reference specific samples and passages from the analyses
+2. **Specificity**: Avoid generic descriptions - be precise about this particular sensibility
+3. **Author-Agnostic**: Refer to "this author" throughout
+4. **Integration**: The portrait should feel unified, not just a list of traits
+
+---
+
+## IMPLIED AUTHOR ANALYSES TO SYNTHESIZE
+
+{% for sample_id, analysis in implied_author_analyses.items() %}
+---
+**{{ sample_id|upper }}**
+
+{{ analysis }}
+
+
+{% endfor %}

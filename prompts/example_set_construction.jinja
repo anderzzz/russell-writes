@@ -1,0 +1,183 @@
+## TASK: EXAMPLE SET CONSTRUCTION
+
+You are curating a **few-shot example set** from evaluated passages. The set will be used to teach an AI to write in this author's manner through **tacit transmission** - showing, not telling.
+
+Your goal: Select **3-4 passages** that collectively provide the richest implicit instruction.
+
+---
+
+## CURATION PRINCIPLE
+
+The best few-shot set is not simply "the highest-rated passages." It must balance:
+
+1. **Density**: Each passage individually rich with characteristic qualities (ratings 4-5)
+2. **Diversity**: Collectively covering different compositional tasks, topics, structures
+3. **Complementarity**: Each passage contributing something unique to the set
+4. **Coherence**: Together forming a unified demonstration of how this author writes
+
+Think of it as **showing the range within consistency** - different moves, all recognizably theirs.
+
+---
+
+## SELECTION PROCEDURE
+
+### STEP 1: ESTABLISH SELECTION CRITERIA
+
+Based on the field guide and passage evaluations, what should an optimal set include?
+
+Consider:
+- **Minimum density**: Only 4-5 rated passages eligible?
+- **Task coverage**: Which compositional tasks must be represented?
+- **Textural variety**: Different sentence patterns, paragraph lengths, rhetorical modes?
+- **Topic diversity**: Different subject matters to prevent content contamination?
+- **Length range**: Mix of shorter and longer passages?
+- **Teaching priorities**: Which authorial qualities are most crucial to transmit?
+
+List **5-7 selection criteria** you'll use, with brief rationale for each.
+
+### STEP 2: PRIMARY EXAMPLE SET (3-4 passages)
+
+Select your primary set of **3-4 passages**.
+
+For each passage:
+
+```
+PASSAGE #[N]: [Evaluation ID or source identifier]
+
+**Density Rating:** [4 or 5]
+
+**What It Demonstrates:**
+[Which of the author's characteristic patterns are most visible here?]
+
+**Compositional Task(s):**
+[What compositional challenges does this passage exemplify?]
+
+**Unique Contribution:**
+[What does this passage add to the set that others don't provide?]
+
+**Brief Excerpt:**
+[First 100-150 words to show flavor]
+```
+
+After listing all passages, explain **why these specific 3-4** work together as a set.
+
+### STEP 3: SET COHERENCE ASSESSMENT
+
+Assess the set as a whole:
+
+**Well-Represented Aspects**
+- Which dimensions of the author's writing are strongly present across the set?
+- Sensibility markers?
+- Decision patterns?
+- Textural features?
+
+**Under-Represented or Missing Aspects**
+- What authorial qualities are weakly present or absent?
+- Are there compositional tasks the set doesn't demonstrate?
+- Textural patterns not shown?
+
+**Learning Prediction**
+- If an AI absorbed these 3-4 examples, what would it learn about this author's writing?
+- What might it miss or misunderstand?
+- Is the set complete enough for tacit transmission?
+
+(Write 2-3 paragraphs)
+
+### STEP 4: ALTERNATIVE/SUPPLEMENTARY PASSAGES
+
+Identify **2-3 additional passages** that could substitute for or supplement the primary set.
+
+For each:
+
+```
+ALTERNATIVE: [Evaluation ID or source]
+
+**Rating:** [4 or 5]
+
+**When to Use:**
+[Under what circumstances would this passage be preferred?
+ - Different compositional focus?
+ - Different topic domain?
+ - Fills specific gap in primary set?]
+
+**Trade-Off:**
+[What does it provide vs. what does the primary set passage provide?]
+```
+
+These alternatives allow flexibility for different generation contexts.
+
+### STEP 5: SET VARIANTS (if applicable)
+
+If the corpus and evaluations support it, suggest **variations of the example set** for different purposes:
+
+**For Argumentative Writing:**
+[3-4 passage IDs optimized for argumentative tasks]
+
+**For Expository Writing:**
+[3-4 passage IDs optimized for explanation and clarification]
+
+**For [Other Mode]:**
+[If the author writes in multiple modes evident in the corpus]
+
+For each variant, briefly justify the selection.
+
+(Skip this step if the author's writing doesn't vary enough to merit variants)
+
+---
+
+## OUTPUT FORMAT
+
+Structure your curation clearly:
+
+```
+## EXAMPLE SET CONSTRUCTION
+
+### SELECTION CRITERIA
+[List 5-7 criteria with rationales]
+
+### PRIMARY EXAMPLE SET
+[3-4 passages with full details]
+
+**Why These Work Together:**
+[Explanation of set coherence]
+
+### SET COHERENCE ASSESSMENT
+[Analysis of coverage and gaps]
+
+### ALTERNATIVE PASSAGES
+[2-3 alternatives with use cases]
+
+### SET VARIANTS [if applicable]
+[Different optimized sets for different purposes]
+```
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Quality Over Quantity**: 3-4 well-chosen passages, not more
+2. **Justify Each Selection**: Explain unique contribution to set
+3. **Assess Gaps Honestly**: Note what's under-represented
+4. **Think Pedagogically**: Consider what an AI would learn
+5. **Maintain Diversity**: Avoid redundancy - each passage should add something new
+
+---
+
+## FIELD GUIDE
+
+{{ field_guide }}
+
+---
+
+## PASSAGE EVALUATIONS
+
+You have {{ passage_evaluations|length }} passage evaluations to select from.
+
+{% for evaluation in passage_evaluations %}
+---
+**EVALUATION {{ loop.index }}**
+
+{{ evaluation }}
+
+
+{% endfor %}
