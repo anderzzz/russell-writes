@@ -15,6 +15,9 @@ from belletrist.models import (
     FieldGuideConstructionConfig,
     PassageEvaluationConfig,
     ExampleSetConstructionConfig,
+    QuoteExtractionConfig,
+    QuoteExtractionResponse,
+    ExtractedQuote,
 )
 from belletrist.tools import (
     Tool,
@@ -26,6 +29,9 @@ from belletrist.utils import (
     extract_logical_sections,
     get_full_sample_as_passage,
     extract_passages_by_indices,
+    find_passage_by_quote,
+    extract_nominated_passages_from_analysis,
+    QuoteMatchResult,
     # Evaluation parsing
     parse_passage_evaluation,
     parse_example_set_selection,
@@ -59,6 +65,9 @@ __all__ = [
     "extract_logical_sections",
     "get_full_sample_as_passage",
     "extract_passages_by_indices",
+    "find_passage_by_quote",
+    "extract_nominated_passages_from_analysis",
+    "QuoteMatchResult",
 
     # Evaluation parsing utilities
     "parse_passage_evaluation",
@@ -79,4 +88,7 @@ __all__ = [
     "FieldGuideConstructionConfig",
     "PassageEvaluationConfig",
     "ExampleSetConstructionConfig",
+    "QuoteExtractionConfig",
+    "QuoteExtractionResponse",
+    "ExtractedQuote",
 ]

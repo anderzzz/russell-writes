@@ -404,3 +404,74 @@ class ExampleSetConstructionConfig(BasePromptConfig):
     def synthesis_type(cls) -> str:
         """Return synthesis type identifier for ResultStore."""
         return "example_set"
+
+
+# =============================================================================
+# Quote Extraction for Nominated Passages
+# =============================================================================
+
+class ExtractedQuote(BaseModel):
+    """A single quote extracted from an analysis."""
+
+    quote_text: str = Field(
+        ...,
+        min_length=10,
+        description="The quoted passage text (1-3 sentences typical)"
+    )
+    context_type: Literal[
+        "signature_moment",
+        "high_density_decision",
+        "textural_exemplar",
+        "evidence_quote"
+    ] = Field(
+        ...,
+        description="Type of quote based on its role in the analysis"
+    )
+    rationale: str = Field(
+        ...,
+        min_length=10,
+        description="Why this passage was highlighted in the analysis"
+    )
+
+
+class QuoteExtractionResponse(BaseModel):
+    """Response from quote extraction LLM call."""
+
+    quotes: list[ExtractedQuote] = Field(
+        ...,
+        min_items=1,
+        max_items=10,
+        description="Quotes extracted from the analysis"
+    )
+    analysis_type: str = Field(
+        ...,
+        description="Type of analysis (implied_author, decision_pattern, functional_texture)"
+    )
+
+
+class QuoteExtractionConfig(BasePromptConfig):
+    """
+    Configuration for extract_quotes.jinja.
+
+    Extracts quoted passages from Stage 1-2 analyses using LLM with JSON mode.
+    Uses quotes rather than paragraph indices since LLMs reliably quote text
+    but unreliably provide accurate indices.
+    """
+
+    analysis_text: str = Field(
+        ...,
+        min_length=100,
+        description="The analysis text containing quotes to extract"
+    )
+    analysis_type: Literal[
+        "implied_author",
+        "decision_pattern",
+        "functional_texture"
+    ] = Field(
+        ...,
+        description="Type of analysis being processed"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "extract_quotes"

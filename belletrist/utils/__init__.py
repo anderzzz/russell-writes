@@ -8,7 +8,10 @@ from belletrist.utils.passage_extraction import (
     extract_paragraph_windows,
     extract_logical_sections,
     get_full_sample_as_passage,
-    extract_passages_by_indices
+    extract_passages_by_indices,
+    find_passage_by_quote,
+    extract_nominated_passages_from_analysis,
+    QuoteMatchResult
 )
 
 from belletrist.utils.evaluation_parsing import (
@@ -27,6 +30,9 @@ __all__ = [
     'extract_logical_sections',
     'get_full_sample_as_passage',
     'extract_passages_by_indices',
+    'find_passage_by_quote',
+    'extract_nominated_passages_from_analysis',
+    'QuoteMatchResult',
     # Evaluation parsing
     'parse_passage_evaluation',
     'parse_example_set_selection',

@@ -1,0 +1,78 @@
+## TASK: EXTRACT QUOTED PASSAGES FROM ANALYSIS
+
+You are extracting quoted passages from a literary analysis.
+
+The analysis contains quotes from the original text that were highlighted as significant examples. Your task is to identify and extract these quotes along with their context.
+
+---
+
+## ANALYSIS TYPE
+
+{{ analysis_type }}
+
+---
+
+## TASK SPECIFICATION
+
+Extract all quotes from the original text that appear in this analysis.
+
+For each quote:
+1. **Extract the exact quoted text** (typically 1-3 sentences, but may be longer)
+2. **Classify its context_type** based on why it was quoted:
+   - `signature_moment`: From "SIGNATURE MOMENTS" or similar sections highlighting characteristic passages
+   - `high_density_decision`: From decision pattern analysis showing multiple craft choices converging
+   - `textural_exemplar`: From functional texture analysis highlighting distinctive style features
+   - `evidence_quote`: Supporting evidence for dimensional analysis or claims
+3. **Note the rationale**: Why was this passage highlighted in the analysis?
+
+---
+
+## OUTPUT FORMAT
+
+Return a JSON object with this exact structure:
+
+```json
+{
+  "analysis_type": "{{ analysis_type }}",
+  "quotes": [
+    {
+      "quote_text": "The exact quoted passage from the original text...",
+      "context_type": "signature_moment",
+      "rationale": "Brief explanation of why this was highlighted"
+    }
+  ]
+}
+```
+
+**Valid context_type values:**
+- `signature_moment`
+- `high_density_decision`
+- `textural_exemplar`
+- `evidence_quote`
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Extract ONLY quotes that appear in the analysis** - Do not invent new quotes or paraphrase
+2. **Preserve quote text EXACTLY** - Copy the quoted text character-for-character as it appears
+3. **Focus on substantial quotes** - Minimum 1-3 sentences; skip short phrase-level quotes unless they're the only substantial quotes available
+4. **Maximum 10 quotes per analysis** - If more than 10 quotes appear, prioritize the most significant ones
+5. **Include rationale** - Briefly explain why each quote was highlighted (10-50 words)
+6. **Return valid JSON only** - No additional text, no markdown code blocks, just raw JSON
+
+---
+
+## QUOTE SELECTION PRIORITY
+
+If the analysis contains more than 10 quotes, prioritize:
+1. Quotes from dedicated "high-density" or "signature" sections
+2. Quotes used as primary examples (not just supporting evidence)
+3. Longer, more substantial passages over sentence fragments
+4. Quotes with explicit analytical commentary
+
+---
+
+## ANALYSIS TEXT TO PROCESS
+
+{{ analysis_text }}
