@@ -1,8 +1,12 @@
-## TASK: AUTHOR MODEL DEFINITION
+# AUTHOR MIND MODEL: Integration Prompt
 
-You are integrating **three synthesized analyses** into a unified **Author Model Definition** that will enable an LLM to generate text in this author's characteristic style.
+## TASK OVERVIEW
 
-This definition serves one purpose: **provide sufficient instruction and exemplars for an LLM to write as this author would**.
+You are integrating **three synthesized analyses** into a unified **Author Mind Model**—a representation of how this author *thinks* when writing, not merely how their writing *appears*.
+
+The goal: Enable an LLM to inhabit this author's generative stance—their way of encountering material, weighing choices, and responding to compositional problems as they arise.
+
+This is not a style guide. It is an attempt to transmit **tacit knowledge**: the internalized principles and instincts that produce the style as a byproduct.
 
 ---
 
@@ -10,150 +14,324 @@ This definition serves one purpose: **provide sufficient instruction and exempla
 
 You have three Stage 2 syntheses:
 
-1. **Implied Author Synthesis**: The sensibility dimension
-2. **Decision Pattern Synthesis**: The craft dimension
-3. **Textural Synthesis**: The formal dimension
+1. **Implied Author Synthesis**: Who is writing—their sensibility, values, and characteristic relationship to ideas and readers
+2. **Decision Pattern Synthesis**: How they think through compositional problems—their characteristic moves and governing principles
+3. **Textural Synthesis**: How their instincts manifest in prose—the formal signatures that emerge from their way of thinking
 
-Your task: Integrate these into a **self-contained generative model** with prescriptive guidelines and contextualized few-shot examples.
+Each synthesis contains **quoted passages from the source texts**. These passages are essential—they constitute the concrete examples that ground the abstract model.
+
+Your task: Integrate these into a **generative mind model** that an LLM can inhabit, anchored in richly annotated exemplar passages.
+
+---
+
+## CONCEPTUAL FRAME
+
+### Style as Residue of Mind
+
+Think of style not as a set of features to apply, but as the **residue of a mind at work**.
+
+When this author writes:
+- They hold certain things as important and others as secondary
+- They have internalized responses to recurring compositional situations
+- They have developed instincts about what "sounds right" that reflect deeper values
+- They make micro-decisions continuously, governed by principles they may not consciously articulate
+
+Your model should capture the **generative logic**—the upstream causes—not just the downstream effects.
+
+### The Chef Analogy
+
+You're not writing a recipe (add X, then Y, then Z). You're describing how a chef *thinks about food*—their palate, their instincts, what they're always balancing, what they'd never do and why. Someone who internalizes that could cook dishes the chef never made, and they'd still taste right.
+
+### Quoted Passages as Primary Teachers
+
+The quoted passages from the source texts are not mere evidence—they are the **core teaching mechanism**.
+
+Abstract principles are useful for orientation, but an LLM learns to write like this author primarily by encountering many examples of their actual prose, richly annotated to make visible what might otherwise remain tacit.
+
+Think of this as **contextualized few-shot prompting**: each exemplar passage, paired with analysis of its generative logic, teaches the model what "right" looks like for this author. The more passages, and the richer the annotation, the better the transmission.
+
+Your output should be **dense with quoted material** from the source texts, carried forward from the syntheses and newly annotated for generative purposes.
 
 ---
 
 ## OUTPUT STRUCTURE
 
-### PART 1: UNIFIED AUTHOR MODEL (500-700 words)
+### PART 1: THE GENERATIVE STANCE
 
-Write an integrated description of **how this author writes** that synthesizes all three dimensions into actionable guidance.
+**Target length: 400-500 words**
 
-This is not descriptive—it's **prescriptive**. Write as instructions for *how to write* in this style:
+Describe **what it is like to be this author** when writing.
 
-**Fundamental Approach**
-- What is this author fundamentally doing when they write? (Arguing, explaining, discovering, persuading, clarifying?)
-- What stance should the writer take toward their material?
-- What relationship should be established with the reader?
-- What is the dominant quality to achieve: precision? momentum? accessibility? authority? Something else?
+This is not "what they do" but "how they are oriented." Write in second person, as if inducting someone into a way of being:
 
-**Integration of Dimensions**
-Show how sensibility, decisions, and texture work together:
-- How does the author's sensibility manifest in compositional choices?
-- How are those decisions realized in sentence structure, word choice, paragraph shape?
-- What emerges from the integration that no single dimension captures?
+#### Orientation to Material
+- How do you hold your subject matter? With what mixture of mastery and curiosity, certainty and provisionality?
+- What are you fundamentally trying to do—argue, clarify, discover, complicate, something else?
+- What is your relationship to complexity? Do you relish it, work to dissolve it, hold it in tension?
 
-**Writing Priorities**
-- What does this author consistently prioritize? (Clarity over elegance? Nuance over simplicity?)
-- What does this author consistently avoid or subordinate?
+#### Orientation to Reader
+- Who are you writing to? What do you assume about them?
+- What relationship are you establishing—collegial, pedagogical, adversarial, intimate?
+- What do you owe them? What do you expect from them?
 
-Write this as **direct instruction** to a language model that will generate text. Use imperatives: "Establish X relationship with the reader. Construct sentences that... Choose words that..."
+#### Orientation to the Prose Itself
+- What does "good" feel like to you? When you've written a sentence that works, what quality does it have?
+- What are you always balancing? (Precision vs. accessibility? Authority vs. humility? Momentum vs. nuance?)
+- What would feel like a failure—what prose quality would make you wince?
 
-### PART 2: GENERATIVE GUIDELINES
+#### The Governing Tension
+Every author navigates characteristic tensions. What is this author's central balancing act? What are they always holding together that pulls in different directions?
 
-Translate the synthesis patterns into **specific, actionable writing instructions** organized by compositional task.
+**Voice**: Write this section as direct address—"you" not "this author." The goal is inhabitation, not description.
 
-For each guideline, specify:
-- **WHEN**: Under what conditions this technique applies
-- **HOW**: Specific compositional moves to execute
-- **WHY**: What this achieves (effect on reader, function in argument)
-- **EXAMPLE**: Brief reference to exemplar passages (to be detailed in Part 3)
+**Evidence**: Ground each observation in brief quoted phrases or sentences from the source texts that exemplify the stance.
 
-**A. SENSIBILITY GUIDELINES** (4-6 instructions)
-How to enact this author's characteristic stance and relationship to material/reader.
+---
 
-Example format:
+### PART 2: DECISION-MAKING PRINCIPLES
+
+The Decision Pattern Synthesis identified characteristic moves. Now extract the **principles that govern when and why** those moves deploy.
+
+For each major compositional situation, describe not "what to do" but "how to think about it."
+
+#### Format for Each Principle
+
 ```
-**Qualified Authority**
-WHEN: Asserting core claims
-HOW: State the claim firmly in main clause, then immediately acknowledge limits or complications in subordinate clause
-WHY: Establishes authority while signaling intellectual honesty; positions reader as capable of nuanced thinking
-EXAMPLE: See Exemplar 1, Exemplar 4
+SITUATION: [The compositional problem]
+
+THE QUESTION TO ASK YOURSELF:
+[What this author seems to weigh or consider when facing this situation]
+
+WHAT MATTERS HERE:
+[The values or priorities that govern the choice]
+
+HOW THIS TYPICALLY RESOLVES:
+[The characteristic move—framed as emerging from the above, not as a rule]
+
+WHAT WOULD VIOLATE THE SPIRIT:
+[Not just "don't do X" but why X would feel wrong given the governing values]
+
+ILLUSTRATIVE PASSAGE:
+[A quoted passage from the source texts that shows this principle in action, with brief annotation]
 ```
 
-**B. DECISION GUIDELINES** (6-8 instructions)
-How to make compositional choices for recurring problems.
+#### Situations to Cover (6-8 total)
 
-Cover key compositional tasks identified in decision synthesis:
 - Opening a text or major section
-- Introducing complex concepts
-- Transitioning between topics
-- Handling objections or alternative views
-- Building multi-paragraph arguments
-- Concluding sections
+- Introducing something complex or unfamiliar
+- Handling alternatives, objections, or complications
+- Moving between major ideas
+- Building extended arguments
+- Arriving at conclusions
+- [Others specific to this author as identified in the synthesis]
 
-**C. TEXTURAL GUIDELINES** (4-6 instructions)
-How to construct sentences, choose words, and shape paragraphs.
+**Key shift**: Instead of "When introducing concepts, do X," write "When introducing concepts, this author is balancing A against B, and asking themselves C. This typically leads to moves like X, but the governing question is..."
 
-Address:
-- Sentence architecture (complexity management, subordination patterns)
-- Lexical choices (register, precision-accessibility balance, verb/noun preferences)
-- Paragraph structure (opening moves, development patterns, closing moves)
-- Rhythmic variation (when to speed up, slow down, create emphasis)
+**Each principle must include at least one quoted passage** demonstrating it in practice.
 
-### PART 3: FEW-SHOT EXEMPLARS
+---
 
-Curate **8-12 exemplary passages** from the syntheses that demonstrate this author's characteristic style in action.
+### PART 3: TEXTURAL INSTINCTS
 
-For each exemplar:
+The Textural Synthesis identified formal patterns. Now describe these as **instincts**—internalized responses that happen below conscious deliberation.
+
+#### Sentence-Level Instincts
+- What does a "right" sentence feel like to this author?
+- When does complexity want to accumulate, and when does it want to resolve?
+- What creates the characteristic rhythm—and what would disrupt it?
+
+**Include 2-3 quoted sentences** that exemplify these instincts, with brief annotation of what makes them "right."
+
+#### Lexical Instincts
+- What is the author's ear attuned to? What word choices would sound "off"?
+- How does precision feel different from jargon? Where is the line?
+- What is the relationship between concrete and abstract—when does each feel necessary?
+
+**Include examples** of characteristic word choices and phrasings from the source texts.
+
+#### Paragraph-Level Instincts
+- How does a paragraph want to begin? What kind of opening feels right?
+- What constitutes "enough" development before moving on?
+- How should a paragraph end—with closure, pivot, or continuation?
+
+**Include 1-2 quoted paragraphs** that exemplify these instincts, with annotation.
+
+**Voice**: Write these as felt senses, not rules. "This author's sentences tend to..." becomes "There's an instinct here for sentences that..."
+
+---
+
+### PART 4: EXEMPLAR PASSAGES WITH GENERATIVE ANNOTATIONS
+
+**This is the heart of the model.**
+
+Select **10-15 passages** from across the syntheses that demonstrate this author's characteristic style in action. These passages, richly annotated, are the primary mechanism by which an LLM will learn to write as this author.
+
+#### Format for Each Exemplar
 
 ```
+---
+
 **EXEMPLAR [N]: [Functional Label]**
+*[Compositional context: e.g., "Opening a complex argument" / "Handling an objection" / "Technical explanation"]*
 
-**PASSAGE**:
-[Full quoted passage - preserve exact text]
+**PASSAGE:**
 
-**WHAT MAKES THIS CHARACTERISTIC**:
-[2-3 paragraphs explaining which sensibility/decision/textural elements converge here]
+> [Full quoted passage from source text—preserve exact wording]
+> [Include enough context for the passage to be meaningful—typically 3-10 sentences]
 
-Annotate specifically:
-- Sensibility: What stance/relationship is enacted?
-- Decisions: Which compositional choices are demonstrated?
-- Texture: What sentence/lexical/paragraph features are present?
-- Integration: How do the dimensions work together?
+**SURFACE ANNOTATION** (What's Visible)
 
-**WHEN TO DEPLOY THIS PATTERN**:
-[Under what compositional conditions would this passage serve as a model?]
+- Sentence structures: [What's notable about how sentences are built here]
+- Lexical choices: [What's notable about word choice, register, precision]
+- Paragraph moves: [How the passage develops, opens, closes]
+- Rhythm: [What creates the characteristic movement]
+
+**GENERATIVE ANNOTATION** (What Produced This)
+
+- Weighing: [What was the author balancing or considering here?]
+- Priorities: [What values governed these choices?]
+- Rejections: [What would have felt wrong here, and why?]
+- Emergence: [How do the formal features emerge from the stance?]
+
+This annotation answers: "If I were thinking the way this author thinks, how would I arrive at prose like this?"
+
+**DEPLOYMENT CONTEXT:**
+
+When would this passage serve as a model? What compositional situation does it address? What can be learned from it that transfers to other contexts?
+
+---
 ```
 
-**Selection criteria** for exemplars:
-1. **Density**: Multiple characteristic features converge
-2. **Diversity**: Collectively cover range of compositional tasks (opening, explaining, arguing, concluding, etc.)
-3. **Clarity**: The characteristic features are clearly visible, not subtle
-4. **Teachability**: Each exemplar demonstrates something distinct and reusable
+#### Selection Criteria
 
-**Sources for exemplars**: Draw from passages flagged in the three syntheses:
+1. **Density**: Multiple characteristic features converge in each passage
+2. **Diversity**: Collectively cover the full range of compositional situations (opening, explaining, arguing, transitioning, concluding, handling complexity, etc.)
+3. **Clarity**: The characteristic features are clearly visible, not subtle
+4. **Generative transparency**: The logic that produced the passage is recoverable
+5. **Length variety**: Include both paragraph-length and multi-paragraph passages
+
+#### Sources for Exemplars
+
+Draw from passages already flagged in the three syntheses:
 - Signature moments (from implied author synthesis)
 - High-density decision passages (from decision pattern synthesis)
 - Texturally distinctive passages (from textural synthesis)
-- Exemplary sentences/paragraphs cited in syntheses
+- Exemplary sentences and paragraphs cited throughout
 
-**Organization**: Group exemplars by function if helpful (e.g., "Opening Moves", "Handling Complexity", "Textural Integration"), or present sequentially with clear functional labels.
+**Preserve the full quoted text**—do not summarize or truncate. The exact wording is the teaching material.
 
-### PART 4: IMPLEMENTATION GUIDANCE
+#### Organization
 
-Provide **practical notes** for applying this model:
+Group exemplars by compositional function:
+- **Opening Moves** (2-3 exemplars)
+- **Handling Complexity** (2-3 exemplars)
+- **Argumentation and Persuasion** (2-3 exemplars)
+- **Transitions and Connections** (1-2 exemplars)
+- **Conclusions and Consolidation** (2-3 exemplars)
+- **[Other categories as appropriate to this author]**
 
-**A. INTENSITY MODULATION**
+---
+
+### PART 5: THE ANTI-MODEL
+
+What is this author **not**?
+
+This section prevents over-application and caricature by clarifying the boundaries.
+
+#### Misconceptions to Avoid
+- What might someone think this style is, that would miss the point?
+- What surface features might be imiated without capturing the generative logic?
+- What is the difference between this author and superficially similar writers?
+
+#### Failure Modes
+- What happens if you have the sensibility but not the craft?
+- What happens if you have the textural features but not the underlying values?
+- What does caricature of this style look like?
+
+**Include an example or two** of what "wrong" would look like—either invented or drawn from the anti-patterns identified in the decision synthesis.
+
+#### What This Author Would Never Do (And Why)
+- Not just avoided moves, but the principles that make them feel wrong
+- Frame as: "This would violate the author's commitment to..."
+
+Draw from the anti-patterns section of the Decision Pattern Synthesis.
+
+#### Edge Cases
+- Situations where this model might not apply well
+- Types of writing tasks that might require adaptation
+- Contexts where the characteristic style should be modulated
+
+---
+
+### PART 6: INTEGRATION AND CALIBRATION
+
+How do the three dimensions hold together, and how should the model be applied?
+
+#### The Causal Chain
+
+Describe how sensibility → decisions → texture, showing the generative flow:
+
+- **Sensibility → Decisions**: How does who-this-author-is shape how-they-solve-problems? What values determine which compositional moves feel right?
+- **Decisions → Texture**: How do their problem-solving patterns manifest in formal features? Why do their characteristic moves produce their characteristic sentences?
+- **The Unity**: What breaks if you have texture without decisions? Decisions without sensibility? Show that these are aspects of one coherent mind, not separable components.
+
+#### The Coherence Test
+
+How can you tell if generated text has successfully inhabited this author?
+
+- What to check beyond surface features
+- What questions to ask about whether the generative logic is right
+- How to distinguish successful inhabitation from mechanical imitation
+
+#### Calibration Guidance
+
+**Intensity Modulation**
 - When to intensify characteristic features (high-stakes arguments, paradigmatic demonstrations)
-- When to moderate them (introductory material, transitions)
-- How to avoid caricature or over-application
+- When to moderate them (introductory material, simple explanations, transitions)
+- How intensity relates to compositional context
 
-**B. COMMON PITFALLS**
-- What this style is NOT (misconceptions to avoid)
-- Anti-patterns: moves this author consistently avoids
-- Edge cases: situations where the model might not apply
+**Adaptation Principles**
+- How to adapt to different compositional tasks while maintaining coherence
+- What remains constant vs. what flexes
+- How to handle tasks this author may not have demonstrated in the source texts
 
-**C. INTEGRATION PRINCIPLES**
-- How do sensibility, decisions, and texture reinforce each other?
-- What breaks if one dimension is present but others are absent?
-- How to maintain coherence when deploying multiple techniques
+**Avoiding Mechanical Application**
+- The model describes tendencies, not invariant rules
+- How to maintain the spirit when the letter doesn't apply
+- Signs that application has become caricature
 
 ---
 
 ## CRITICAL REQUIREMENTS
 
-1. **Prescriptive, Not Descriptive**: Write as instructions for generation, not descriptions for recognition
-2. **Exemplars as Teachers**: Part 3 exemplars must be full passages with detailed annotations, not just citations
-3. **Actionable Specificity**: Every guideline must be concrete enough to execute
-4. **Integration**: Show how dimensions work together throughout
-5. **Author-Agnostic**: Refer to "this author" throughout
-6. **Completeness**: The output should be self-contained—usable without referring back to the syntheses
+1. **Generative, Not Descriptive**: Capture the upstream causes (how they think) not downstream effects (how it looks)
+
+2. **Dense with Quoted Material**: The output should contain substantial quoted passages from the source texts—these are the primary teaching mechanism, not decoration
+
+3. **Inhabitable**: Write Part 1 and instinct sections so an LLM can "become" this author, not just imitate them
+
+4. **Principled, Not Rule-Bound**: Frame guidelines as emerging from values and priorities, not as arbitrary constraints
+
+5. **Integrated**: Show how sensibility, decisions, and texture are aspects of one coherent mind
+
+6. **Richly Annotated Exemplars**: Part 4 exemplars must include full passages with detailed generative annotations—this is contextualized few-shot prompting
+
+7. **Self-Contained**: The output must be usable without referring back to the syntheses—all necessary quoted material should be included
+
+8. **Author-Agnostic**: Use "this author" in descriptive sections, "you" in inhabitation sections
+
+---
+
+## QUALITY CRITERIA
+
+The output succeeds if:
+
+- An LLM given this model could write new text on new topics that would be recognizable as this author's work
+- The model transmits *how to think* not just *what to produce*
+- The exemplar passages, with their annotations, teach by concrete demonstration
+- Someone familiar with this author would recognize the portrait as accurate
+- Someone unfamiliar would have enough to begin writing in this mode
+- The anti-model prevents the most likely failure modes
 
 ---
 
