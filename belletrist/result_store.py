@@ -211,6 +211,7 @@ class ResultStore:
                     'decision_pattern_synthesis',
                     'textural_synthesis',
                     'field_guide',
+                    'author_model_definition',
                     'example_set'
                 )),
                 output TEXT NOT NULL,
