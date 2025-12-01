@@ -52,12 +52,16 @@ from belletrist.models.author_modeling_models import (
 
     # Stage 3: Field Guide Construction
     FieldGuideConstructionConfig,
+    AuthorModelDefinitionConfig,
 
     # Stage 4: Corpus Mining
     PassageEvaluationConfig,
 
     # Stage 5: Example Set Construction
     ExampleSetConstructionConfig,
+    QuoteExtractionConfig,
+    QuoteExtractionResponse,
+    ExtractedQuote,
 )
 
 __all__ = [
@@ -95,11 +99,14 @@ __all__ = [
     "TexturalSynthesisConfig",
 
     # Author modeling - Stage 3
-    "FieldGuideConstructionConfig",
+    "FieldGuideConstructionConfig", "AuthorModelDefinitionConfig",
 
     # Author modeling - Stage 4
     "PassageEvaluationConfig",
 
     # Author modeling - Stage 5
     "ExampleSetConstructionConfig",
+    "QuoteExtractionConfig",
+    "QuoteExtractionResponse",
+    "ExtractedQuote",
 ]

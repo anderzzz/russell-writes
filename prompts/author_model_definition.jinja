@@ -1,0 +1,176 @@
+## TASK: AUTHOR MODEL DEFINITION
+
+You are integrating **three synthesized analyses** into a unified **Author Model Definition** that will enable an LLM to generate text in this author's characteristic style.
+
+This definition serves one purpose: **provide sufficient instruction and exemplars for an LLM to write as this author would**.
+
+---
+
+## INPUT
+
+You have three Stage 2 syntheses:
+
+1. **Implied Author Synthesis**: The sensibility dimension
+2. **Decision Pattern Synthesis**: The craft dimension
+3. **Textural Synthesis**: The formal dimension
+
+Your task: Integrate these into a **self-contained generative model** with prescriptive guidelines and contextualized few-shot examples.
+
+---
+
+## OUTPUT STRUCTURE
+
+### PART 1: UNIFIED AUTHOR MODEL (500-700 words)
+
+Write an integrated description of **how this author writes** that synthesizes all three dimensions into actionable guidance.
+
+This is not descriptive—it's **prescriptive**. Write as instructions for *how to write* in this style:
+
+**Fundamental Approach**
+- What is this author fundamentally doing when they write? (Arguing, explaining, discovering, persuading, clarifying?)
+- What stance should the writer take toward their material?
+- What relationship should be established with the reader?
+- What is the dominant quality to achieve: precision? momentum? accessibility? authority? Something else?
+
+**Integration of Dimensions**
+Show how sensibility, decisions, and texture work together:
+- How does the author's sensibility manifest in compositional choices?
+- How are those decisions realized in sentence structure, word choice, paragraph shape?
+- What emerges from the integration that no single dimension captures?
+
+**Writing Priorities**
+- What does this author consistently prioritize? (Clarity over elegance? Nuance over simplicity?)
+- What does this author consistently avoid or subordinate?
+
+Write this as **direct instruction** to a language model that will generate text. Use imperatives: "Establish X relationship with the reader. Construct sentences that... Choose words that..."
+
+### PART 2: GENERATIVE GUIDELINES
+
+Translate the synthesis patterns into **specific, actionable writing instructions** organized by compositional task.
+
+For each guideline, specify:
+- **WHEN**: Under what conditions this technique applies
+- **HOW**: Specific compositional moves to execute
+- **WHY**: What this achieves (effect on reader, function in argument)
+- **EXAMPLE**: Brief reference to exemplar passages (to be detailed in Part 3)
+
+**A. SENSIBILITY GUIDELINES** (4-6 instructions)
+How to enact this author's characteristic stance and relationship to material/reader.
+
+Example format:
+```
+**Qualified Authority**
+WHEN: Asserting core claims
+HOW: State the claim firmly in main clause, then immediately acknowledge limits or complications in subordinate clause
+WHY: Establishes authority while signaling intellectual honesty; positions reader as capable of nuanced thinking
+EXAMPLE: See Exemplar 1, Exemplar 4
+```
+
+**B. DECISION GUIDELINES** (6-8 instructions)
+How to make compositional choices for recurring problems.
+
+Cover key compositional tasks identified in decision synthesis:
+- Opening a text or major section
+- Introducing complex concepts
+- Transitioning between topics
+- Handling objections or alternative views
+- Building multi-paragraph arguments
+- Concluding sections
+
+**C. TEXTURAL GUIDELINES** (4-6 instructions)
+How to construct sentences, choose words, and shape paragraphs.
+
+Address:
+- Sentence architecture (complexity management, subordination patterns)
+- Lexical choices (register, precision-accessibility balance, verb/noun preferences)
+- Paragraph structure (opening moves, development patterns, closing moves)
+- Rhythmic variation (when to speed up, slow down, create emphasis)
+
+### PART 3: FEW-SHOT EXEMPLARS
+
+Curate **8-12 exemplary passages** from the syntheses that demonstrate this author's characteristic style in action.
+
+For each exemplar:
+
+```
+**EXEMPLAR [N]: [Functional Label]**
+
+**PASSAGE**:
+[Full quoted passage - preserve exact text]
+
+**WHAT MAKES THIS CHARACTERISTIC**:
+[2-3 paragraphs explaining which sensibility/decision/textural elements converge here]
+
+Annotate specifically:
+- Sensibility: What stance/relationship is enacted?
+- Decisions: Which compositional choices are demonstrated?
+- Texture: What sentence/lexical/paragraph features are present?
+- Integration: How do the dimensions work together?
+
+**WHEN TO DEPLOY THIS PATTERN**:
+[Under what compositional conditions would this passage serve as a model?]
+```
+
+**Selection criteria** for exemplars:
+1. **Density**: Multiple characteristic features converge
+2. **Diversity**: Collectively cover range of compositional tasks (opening, explaining, arguing, concluding, etc.)
+3. **Clarity**: The characteristic features are clearly visible, not subtle
+4. **Teachability**: Each exemplar demonstrates something distinct and reusable
+
+**Sources for exemplars**: Draw from passages flagged in the three syntheses:
+- Signature moments (from implied author synthesis)
+- High-density decision passages (from decision pattern synthesis)
+- Texturally distinctive passages (from textural synthesis)
+- Exemplary sentences/paragraphs cited in syntheses
+
+**Organization**: Group exemplars by function if helpful (e.g., "Opening Moves", "Handling Complexity", "Textural Integration"), or present sequentially with clear functional labels.
+
+### PART 4: IMPLEMENTATION GUIDANCE
+
+Provide **practical notes** for applying this model:
+
+**A. INTENSITY MODULATION**
+- When to intensify characteristic features (high-stakes arguments, paradigmatic demonstrations)
+- When to moderate them (introductory material, transitions)
+- How to avoid caricature or over-application
+
+**B. COMMON PITFALLS**
+- What this style is NOT (misconceptions to avoid)
+- Anti-patterns: moves this author consistently avoids
+- Edge cases: situations where the model might not apply
+
+**C. INTEGRATION PRINCIPLES**
+- How do sensibility, decisions, and texture reinforce each other?
+- What breaks if one dimension is present but others are absent?
+- How to maintain coherence when deploying multiple techniques
+
+---
+
+## CRITICAL REQUIREMENTS
+
+1. **Prescriptive, Not Descriptive**: Write as instructions for generation, not descriptions for recognition
+2. **Exemplars as Teachers**: Part 3 exemplars must be full passages with detailed annotations, not just citations
+3. **Actionable Specificity**: Every guideline must be concrete enough to execute
+4. **Integration**: Show how dimensions work together throughout
+5. **Author-Agnostic**: Refer to "this author" throughout
+6. **Completeness**: The output should be self-contained—usable without referring back to the syntheses
+
+---
+
+## STAGE 2 SYNTHESES TO INTEGRATE
+
+### IMPLIED AUTHOR SYNTHESIS
+
+{{ implied_author_synthesis }}
+
+---
+
+### DECISION PATTERN SYNTHESIS
+
+{{ decision_pattern_synthesis }}
+
+---
+
+### TEXTURAL SYNTHESIS
+
+{{ textural_synthesis }}

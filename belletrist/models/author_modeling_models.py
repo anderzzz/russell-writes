@@ -38,6 +38,7 @@ Workflow:
 
     [Stage 6: Generation & Calibration - future work]
 """
+from typing import Literal
 from pydantic import BaseModel, Field, field_validator
 from .prompt_models import BasePromptConfig
 
@@ -315,6 +316,46 @@ class FieldGuideConstructionConfig(BasePromptConfig):
     def synthesis_type(cls) -> str:
         """Return synthesis type identifier for ResultStore."""
         return "field_guide"
+
+
+class AuthorModelDefinitionConfig(BasePromptConfig):
+    """
+    Configuration for author_model_definition.jinja - Stage 3 (Generation-Oriented).
+
+    Integrates the three Stage 2 syntheses into a unified Author Model Definition:
+    - Part 1: Unified author model (500-700 words, prescriptive)
+    - Part 2: Generative guidelines (actionable instructions by task)
+    - Part 3: Few-shot exemplars (8-12 annotated passages)
+    - Part 4: Implementation guidance (intensity modulation, pitfalls)
+
+    This definition enables direct style generation without further processing.
+    It replaces the recognition-oriented field guide for generation use cases.
+    """
+
+    implied_author_synthesis: str = Field(
+        ...,
+        min_length=1,
+        description="Output from Stage 2A (implied author synthesis)"
+    )
+    decision_pattern_synthesis: str = Field(
+        ...,
+        min_length=1,
+        description="Output from Stage 2B (decision pattern synthesis)"
+    )
+    textural_synthesis: str = Field(
+        ...,
+        min_length=1,
+        description="Output from Stage 2C (textural synthesis)"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "author_model_definition"
+
+    @classmethod
+    def synthesis_type(cls) -> str:
+        """Return synthesis type identifier for ResultStore."""
+        return "author_model_definition"
 
 
 # =============================================================================
