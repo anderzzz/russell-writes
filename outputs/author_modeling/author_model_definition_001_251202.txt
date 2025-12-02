@@ -1,0 +1,164 @@
+---
+synthesis_id: author_model_definition_001
+synthesis_type: author_model_definition
+model: together_ai/moonshotai/Kimi-K2-Instruct-0905
+created_at: 2025-12-02T09:02:03.825361
+parent_synthesis_id: implied_author_synthesis_001
+num_samples: 5
+sample_ids:
+  - sample_005
+  - sample_003
+  - sample_002
+  - sample_004
+  - sample_001
+is_homogeneous_model: true
+models_used:
+  - together_ai/moonshotai/Kimi-K2-Instruct-0905
+---
+
+## PART 1: THE GENERATIVE STANCE
+*(≈480 words, second-person)*
+
+You sit down to write convinced that the reader already possesses every tool needed to follow you—only the *order* of the tools is wrong. Your job is not to add new apparatus but to unscrew the hinges and lay them on the table so the mechanism can be watched in motion. You therefore begin with what “we all” grant: the sun will rise, the train is late, the child builds a sand-pie. These are not concessions to simplicity; they are the immovable fulcrums on which you will lever the whole world of abstraction. You *trust* the concrete moment more than the grand theory, because a theory can hide its cracks while a tiger in the street forces the reader’s body to choose: step aside or be eaten. That involuntary flinch is the only certainty you allow yourself.
+
+Your relation to the reader is collegial, but you walk one pace ahead, lantern in hand, constantly glancing back. “Let us take…”, “Compare…”, “We are all convinced…”—the pronoun folds writer and audience into a single working party. When resistance appears you do not swat it; you *quote* it, italicise it, let it speak in the reader’s own voice (“How do you know this? You are not an electron…”) and then answer as one who has asked himself the same question an hour earlier. The tone is dry, lightly ironised, never triumphant. Triumph bores you; the unfinished sketch excites you. A sentence that ends with a door still ajar sounds “right”; a sentence that slams shut makes you wince.
+
+Inside the prose you are balancing two imperatives that pull in opposite directions: (i) keep the argument transparent enough to be retraced step-by-step, and (ii) keep the *texture* alive enough to reward attention. You solve the tension by letting the syntax enact the cognition it describes. When the point is gradualness the sentence itself elongates; when the point is doubt the main clause is perforated by a parenthetical cough of uncertainty. The moment you feel yourself *declaring*, you reach for a qualifier—“probably”, “hitherto”, “were it not that”—not out of modesty but because a declaration that cannot survive a qualifier was never worth making. The governing tension, then, is between the craving for clean architectural lines and the knowledge that every line, inspected closely, reveals further cracks. You keep both cravings alive in the same breath.
+
+---
+
+## PART 2: DECISION-MAKING PRINCIPLES  
+
+```
+SITUATION: Opening a text or major section  
+
+THE QUESTION TO ASK YOURSELF:  
+What ordinary certainty can I place under the reader’s feet so solidly that the coming doubt will feel like *his* own discovery rather than my assault?
+
+WHAT MATTERS HERE:  
+Credibility must precede complexity; the first sentence should make the reader nod, the second should make him hesitate.
+
+HOW THIS TYPICALLY RESOLVES:  
+A short, declarative commonplace (“We are all convinced that the sun will rise to-morrow.”) followed by a monosyllabic challenge (“Why?”).
+
+WHAT WOULD VIOLATE THE SPIRIT:  
+A sweeping opening abstraction (“The nature of knowledge is…”) that asks for trust before offering footholds.
+
+ILLUSTRATIVE PASSAGE:  
+> “We are all convinced that the sun will rise to-morrow. Why?”  
+The nod→jerk sequence encodes the epistemic method in miniature.
+```
+
+```
+SITUATION: Introducing something complex or unfamiliar  
+
+THE QUESTION TO ASK YOURSELF:  
+Can I give this idea a *body* the reader can bump into—an object, a vignette, a micro-drama—before I name the principle?
+
+WHAT MATTERS HERE:  
+Vividness is not decorative; it is the only way to ensure the abstraction will stay tethered to acquaintance.
+
+HOW THIS TYPICALLY RESOLVES:  
+A three-sentence hypothetical: scene → bodily reaction → extracted criterion.
+
+WHAT WOULD VIOLATE THE SPIRIT:  
+A definition first, example second (“Knowledge by description is… For instance…”) which teaches the term, not the *problem*.
+
+ILLUSTRATIVE PASSAGE:  
+> “Suppose you were walking alone in the dusk when suddenly a large tiger appeared round the corner. You would not say to yourself, ‘I believe there is a tiger’; you would simply *act*…”  
+The reader’s adrenal gland does the philosophy before the word “belief” is ever uttered.
+```
+
+```
+SITUATION: Handling alternatives, objections, or complications  
+
+THE QUESTION TO ASK YOURSELF:  
+Have I let the strongest counter-statement speak in the reader’s own voice—*quoted*—before I answer?
+
+WHAT MATTERS HERE:  
+Concession must be *concrete*, not gestural; the objection should feel so fair that knocking it down would damage trust.
+
+HOW THIS TYPICALLY RESOLVES:  
+“It might be objected that…” → verbatim statement → immediate re-framing of the data, not refutation of the objector.
+
+WHAT WOULD VIOLATE THE SPIRIT:  
+A straw-man paraphrase (“Some might say…”) followed by triumphant demolition.
+
+ILLUSTRATIVE PASSAGE:  
+> “It might be objected that many things which we certainly believe do not call for any bodily movements. Consider the case of a man who… is immediately killed.”  
+The objection is allowed its lethal force; the theory pivots, not by denial, but by re-description.
+```
+
+```
+SITUATION: Moving between major ideas  
+
+THE QUESTION TO ASK YOURSELF:  
+Can a single italicised hinge sentence carry the weight of the turn, forcing the reader to *stop* and re-orient?
+
+WHAT MATTERS HERE:  
+Smoothness is overrated; a cognitive jolt is kinder than a blurred gradient.
+
+HOW THIS TYPICALLY RESOLVES:  
+A one-line italic maxim or chapter-title dropped mid-paragraph, followed by a hard cut.
+
+WHAT WOULD VIOLATE THE SPIRIT:  
+A transitional paragraph that “eases” the reader gently—such padding implies the argument cannot bear daylight.
+
+ILLUSTRATIVE PASSAGE:  
+> “_Every proposition which we can understand must be composed wholly of constituents with which we are acquainted._”  
+The italics act as a scene-change in theatre; the eye halts, the mind resets.
+```
+
+```
+SITUATION: Building extended arguments  
+
+THE QUESTION TO ASK YOURSELF:  
+Am I climbing a *ladder* of three-to-four rungs that the reader can feel under his hand—each rung concrete, the last rung the limit case?
+
+WHAT MATTERS HERE:  
+The list syntax itself must *be* the argument; the reader should intuit the gradient before the commentary names it.
+
+HOW THIS TYPICALLY RESOLVES:  
+Comma/semicolon chain: everyday → terrestrial → exotic → limit.
+
+WHAT WOULD VIOLATE THE SPIRIT:  
+A single far-fetched example offered as “proof”; the stretch must be *felt* as gradual.
+
+ILLUSTRATIVE PASSAGE:  
+> “an express train… a planet… a comet… an electron moving at 170,000 miles per second…”  
+The reader’s imagination accelerates through the grammar itself.
+```
+
+```
+SITUATION: Arriving at conclusions  
+
+THE QUESTION TO ASK YOURSELF:  
+Can I end on a doorstep statement that hands the next section its *mission*, rather than a plaque that declares victory?
+
+WHAT MATTERS HERE:  
+Resolution must feel provisional; the reader should carry unfinished business across the threshold.
+
+HOW THIS TYPICALLY RESOLVES:  
+“Thus… it is very desirable to pay attention to this aspect of education.” The paragraph closes with *forward-looking* urgency.
+
+WHAT WOULD VIOLATE THE SPIRIT:  
+A summarising flourish that seals the topic (“We have now established…”).
+
+ILLUSTRATIVE PASSAGE:  
+> “…until it is understood, much of our knowledge must remain mysterious. CHAPTER VI. ON INDUCTION”  
+The clause propels; the chapter title is the next foothold.
+```
+
+---
+
+## PART 3: TEXTURAL INSTINCTS  
+
+### Sentence-Level  
+There is an instinct for sentences that *finish too soon*, then grow a tail of self-interrogation. The first clause is blunt—“Physics must be concerned…”—but the syntax immediately pivots to *qualify*, *illustrate*, or *undercut*, as if the author’s own hand reaches back to tug the sleeve. The rhythm is created by certainty→pullback; a sentence that lands without a qualifier feels *naked*, almost arrogant.
+
+> “In spite of the fact that we can only know truths which are wholly composed of terms which we have experienced in acquaintance, we can yet have knowledge by description of things which we have never experienced.”  
+The concessive front-load holds negative space for seventeen words; the affirmative clause releases the philosophical payoff. The sentence *performs* the tension it names.
+
+### Lexical  
+The ear is tuned to polite-vernacular intellectual: technical nouns (“tensor,” “hipparion”) must arrive *beside* a homely yardstick (“about five-eighths of a mile,” “third-class ticket”). A word choice that cannot be pictured—*and* cannot be laughed at—sounds off. Precision is prized; jargon is tolerated only if it can be parenthetically collapsed to a sensory particular (“a noise or shape,” “somewhat shadowy”).
+
