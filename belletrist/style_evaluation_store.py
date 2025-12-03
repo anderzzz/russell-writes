@@ -5,18 +5,21 @@ This module provides crash-resilient storage for comparative style evaluation
 workflows. Unlike ResultStore (designed for hierarchical synthesis pipelines),
 StyleEvaluationStore is optimized for flat comparative evaluation:
 
-Workflow: Samples → Flatten → Reconstruct (4 methods × M runs) → Judge comparatively
+Workflow: Samples → Flatten → Reconstruct (4 methods × M runs) → Judge comparatively (N times)
 
 Key features:
 - Atomic writes: Every LLM call saved immediately (crash resilient)
 - Resume support: Check what's done, skip completed work
 - Blind evaluation: Stores method mappings for anonymous judging
 - Easy export: DataFrame with resolved rankings for analysis
+- Judge consistency testing: Multiple judgments per reconstruction set
 
 Schema (3 tables):
 1. samples: Original texts + flattened content + provenance
-2. reconstructions: 4 methods × M runs per sample
+2. reconstructions: 4 methods × M reconstruction_runs per sample
 3. comparative_judgments: Anonymous rankings + method mappings + confidence
+   - Primary key: (sample_id, reconstruction_run, judge_run)
+   - Allows multiple judgments of same reconstructions for consistency testing
 
 Usage:
     store = StyleEvaluationStore(Path("results.db"))
@@ -24,18 +27,19 @@ Usage:
     # Save sample
     store.save_sample("sample_001", original, flattened, "File 0, para 50-55")
 
-    # Save reconstructions
+    # Save reconstructions (reconstruction_run=0)
     store.save_reconstruction("sample_001", run=0, "fewshot", text, "gpt-4")
 
-    # Check if judgment needed
-    if not store.has_judgment("sample_001", run=0):
-        # Generate mapping and judgment
-        mapping = store.create_random_mapping(seed=42)
-        judgment = ... # Get from LLM
-        store.save_judgment("sample_001", run=0, judgment, mapping, "claude-3.5")
+    # Judge same reconstructions multiple times for consistency testing
+    for judge_run in range(3):
+        if not store.has_judgment("sample_001", reconstruction_run=0, judge_run=judge_run):
+            mapping = store.create_random_mapping(seed=hash(f"sample_001_0_{judge_run}"))
+            judgment = ... # Get from LLM
+            store.save_judgment("sample_001", reconstruction_run=0, judgment, mapping,
+                              "claude-3.5", judge_run=judge_run)
 
     # Export for analysis
-    df = store.to_dataframe()  # Rankings resolved to methods
+    df = store.to_dataframe()  # Rankings resolved to methods, with judge_run column
 """
 from typing import Optional, Literal
 import sqlite3
@@ -90,11 +94,12 @@ class StyleEvaluationStore:
             )
         """)
 
-        # Table 3: Comparative judgments (1 per sample per run)
+        # Table 3: Comparative judgments (multiple judgments per sample per reconstruction_run)
         self.conn.execute("""
             CREATE TABLE IF NOT EXISTS comparative_judgments (
                 sample_id TEXT NOT NULL,
-                run INTEGER NOT NULL,
+                reconstruction_run INTEGER NOT NULL,
+                judge_run INTEGER NOT NULL DEFAULT 0,
 
                 -- Anonymous rankings (as judge returned them)
                 ranking_text_a INTEGER NOT NULL CHECK(ranking_text_a BETWEEN 1 AND 4),
@@ -114,7 +119,7 @@ class StyleEvaluationStore:
                 judge_model TEXT NOT NULL,
                 timestamp TEXT NOT NULL,
 
-                PRIMARY KEY (sample_id, run),
+                PRIMARY KEY (sample_id, reconstruction_run, judge_run),
                 FOREIGN KEY (sample_id) REFERENCES samples(sample_id)
             )
         """)
@@ -264,19 +269,22 @@ class StyleEvaluationStore:
     def save_judgment(
         self,
         sample_id: str,
-        run: int,
+        reconstruction_run: int,
         judgment: 'StyleJudgmentComparative',
         mapping: 'MethodMapping',
-        judge_model: str
+        judge_model: str,
+        judge_run: int = 0
     ):
         """Save a comparative judgment with method mapping.
 
         Args:
             sample_id: Sample identifier
-            run: Run number
+            reconstruction_run: Reconstruction run number
             judgment: StyleJudgmentComparative instance from LLM
             mapping: MethodMapping showing which label corresponds to which method
             judge_model: Model used for judging (e.g., 'claude-sonnet-4-5')
+            judge_run: Judge run number (default 0). Use > 0 for consistency testing
+                      (multiple judgments of same reconstructions)
 
         Raises:
             ValueError: If sample doesn't exist or not all 4 reconstructions exist
@@ -288,21 +296,22 @@ class StyleEvaluationStore:
             )
 
         # Verify all 4 reconstructions exist
-        reconstructions = self.get_reconstructions(sample_id, run)
+        reconstructions = self.get_reconstructions(sample_id, reconstruction_run)
         if len(reconstructions) != 4:
             missing = set(['generic', 'fewshot', 'author', 'instructions']) - set(reconstructions.keys())
             raise ValueError(
-                f"Missing reconstructions for sample '{sample_id}', run {run}: {missing}"
+                f"Missing reconstructions for sample '{sample_id}', reconstruction_run {reconstruction_run}: {missing}"
             )
 
         # Save judgment
         timestamp = datetime.now().isoformat()
         self.conn.execute("""
             INSERT OR REPLACE INTO comparative_judgments
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             sample_id,
-            run,
+            reconstruction_run,
+            judge_run,
             judgment.ranking_text_a,
             judgment.ranking_text_b,
             judgment.ranking_text_c,
@@ -318,20 +327,21 @@ class StyleEvaluationStore:
         ))
         self.conn.commit()
 
-    def has_judgment(self, sample_id: str, run: int) -> bool:
-        """Check if a judgment exists for a sample/run.
+    def has_judgment(self, sample_id: str, reconstruction_run: int, judge_run: int = 0) -> bool:
+        """Check if a judgment exists for a sample/reconstruction_run/judge_run.
 
         Args:
             sample_id: Sample identifier
-            run: Run number
+            reconstruction_run: Reconstruction run number
+            judge_run: Judge run number (default 0)
 
         Returns:
             True if judgment exists, False otherwise
         """
         row = self.conn.execute("""
             SELECT 1 FROM comparative_judgments
-            WHERE sample_id=? AND run=?
-        """, (sample_id, run)).fetchone()
+            WHERE sample_id=? AND reconstruction_run=? AND judge_run=?
+        """, (sample_id, reconstruction_run, judge_run)).fetchone()
         return row is not None
 
     # ==========================================================================
@@ -400,7 +410,8 @@ class StyleEvaluationStore:
         Returns:
             DataFrame with columns:
                 - sample_id: Sample identifier
-                - run: Run number
+                - reconstruction_run: Reconstruction run number
+                - judge_run: Judge run number
                 - ranking_generic: Rank of generic method (1-4)
                 - ranking_fewshot: Rank of fewshot method (1-4)
                 - ranking_author: Rank of author method (1-4)
@@ -411,7 +422,7 @@ class StyleEvaluationStore:
                 - timestamp: When judgment was made
         """
         rows = self.conn.execute("""
-            SELECT * FROM comparative_judgments ORDER BY sample_id, run
+            SELECT * FROM comparative_judgments ORDER BY sample_id, reconstruction_run, judge_run
         """).fetchall()
 
         records = []
@@ -425,7 +436,8 @@ class StyleEvaluationStore:
 
             records.append({
                 'sample_id': row['sample_id'],
-                'run': row['run'],
+                'reconstruction_run': row['reconstruction_run'],
+                'judge_run': row['judge_run'],
                 'ranking_generic': method_rankings['generic'],
                 'ranking_fewshot': method_rankings['fewshot'],
                 'ranking_author': method_rankings['author'],
