@@ -6,7 +6,9 @@ from belletrist.models.llm_config_models import (
 )
 from belletrist.models.style_evaluation_models import (
     MethodMapping,
-    StyleJudgmentComparative
+    StyleJudgmentComparative,
+    MethodMapping5Way,
+    StyleJudgmentComparative5Way
 )
 from belletrist.models.prompt_models import (
     # Base classes
@@ -38,6 +40,7 @@ from belletrist.models.prompt_models import (
     StyleReconstructionAuthorConfig,
     StyleReconstructionInstructionsConfig,
     StyleJudgeComparativeConfig,
+    StyleJudgeComparative5WayConfig,
 )
 from belletrist.models.author_modeling_models import (
     # Stage 1: Analytical Mining
@@ -70,6 +73,7 @@ __all__ = [
 
     # Style evaluation
     "MethodMapping", "StyleJudgmentComparative",
+    "MethodMapping5Way", "StyleJudgmentComparative5Way",
 
     # Base classes
     "BasePromptConfig", "SpecialistAnalystConfig",
@@ -89,7 +93,7 @@ __all__ = [
     "StyleFlatteningConfig", "StyleFlatteningAggressiveConfig",
     "StyleReconstructionGenericConfig", "StyleReconstructionFewShotConfig",
     "StyleReconstructionAuthorConfig", "StyleReconstructionInstructionsConfig",
-    "StyleJudgeComparativeConfig",
+    "StyleJudgeComparativeConfig", "StyleJudgeComparative5WayConfig",
 
     # Author modeling - Stage 1
     "ImpliedAuthorConfig", "DecisionPatternConfig", "FunctionalTextureConfig",

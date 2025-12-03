@@ -613,3 +613,51 @@ class StyleJudgeComparativeConfig(BasePromptConfig):
     @classmethod
     def template_name(cls) -> str:
         return "style_judge_comparative"
+
+
+class StyleJudgeComparative5WayConfig(BasePromptConfig):
+    """
+    Configuration for style_judge_comparative_5way.jinja - blind comparative ranking with 5 texts.
+
+    Provides the original text and 5 anonymously labeled texts (A, B, C, D, E)
+    for comparative blind evaluation. The judge ranks all 5 from 1-5 based on
+    stylistic similarity to the original.
+
+    Use case: Include the original text itself as one of the 5 options to test
+    whether the judge can reliably identify it (adversarial validation).
+    """
+
+    original_text: str = Field(
+        ...,
+        min_length=1,
+        description="The original gold standard text"
+    )
+    reconstruction_text_a: str = Field(
+        ...,
+        min_length=1,
+        description="Text labeled as A (anonymous)"
+    )
+    reconstruction_text_b: str = Field(
+        ...,
+        min_length=1,
+        description="Text labeled as B (anonymous)"
+    )
+    reconstruction_text_c: str = Field(
+        ...,
+        min_length=1,
+        description="Text labeled as C (anonymous)"
+    )
+    reconstruction_text_d: str = Field(
+        ...,
+        min_length=1,
+        description="Text labeled as D (anonymous)"
+    )
+    reconstruction_text_e: str = Field(
+        ...,
+        min_length=1,
+        description="Text labeled as E (anonymous)"
+    )
+
+    @classmethod
+    def template_name(cls) -> str:
+        return "style_judge_comparative_5way"
