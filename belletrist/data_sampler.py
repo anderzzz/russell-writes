@@ -83,7 +83,8 @@ class DataSampler:
     def __init__(self, data_path: Union[str, Path]):
         if isinstance(data_path, str):
             data_path = Path(data_path)
-        self.fps = tuple(data_path.glob("*.txt"))
+        # Sort files for deterministic ordering across systems
+        self.fps = tuple(sorted(data_path.glob("*.txt")))
         self.n_paragraphs = {
             fp.name : len(load_paragraphs(fp)) for fp in self.fps
         }
