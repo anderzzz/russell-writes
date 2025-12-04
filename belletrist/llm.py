@@ -4,9 +4,13 @@ Simple LLM wrapper for text completion.
 Provides a clean interface for text-in, text-out interactions with any
 LiteLLM-supported model.
 """
-from typing import Optional, Union
+from typing import Optional, Union, Type
 import json
 import litellm
+from pydantic import BaseModel, ValidationError
+
+# Enable client-side JSON schema validation for providers that don't natively support it
+litellm.enable_json_schema_validation = True
 
 from belletrist import LLMConfig, Message, LLMRole, LLMResponse, Tool
 
@@ -108,6 +112,107 @@ class LLM:
             data = json.loads(response.content)
         """
         return self.complete(prompt, system, response_format={"type": "json_object"}, **kwargs)
+
+    def complete_with_schema(
+            self,
+            prompt: Union[str, list[Message]],
+            schema_model: Type[BaseModel],
+            system: Optional[str] = None,
+            strict: bool = True,
+            **kwargs
+    ) -> LLMResponse:
+        """
+        Execute a completion with schema-validated structured output.
+
+        Uses LiteLLM's JSON schema mode to enforce structure at the LLM level.
+        Falls back to json_object mode with manual validation if strict schemas
+        aren't supported by the provider.
+
+        Args:
+            prompt: Either a string (converted to user message) or list of Messages
+            schema_model: Pydantic model class defining the expected JSON structure
+            system: Optional system prompt to prepend
+            strict: Whether to use strict schema mode (default: True). If False,
+                   uses json_object mode with manual validation
+            **kwargs: Override config parameters for this call
+
+        Returns:
+            LLMResponse with validated Pydantic model instance in .content field
+
+        Raises:
+            ValueError: If LLM returns invalid JSON or response fails schema validation
+
+        Example:
+            from pydantic import BaseModel, Field
+
+            class UserInfo(BaseModel):
+                name: str
+                age: int = Field(..., ge=0, le=120)
+
+            llm = LLM("gpt-4")
+            response = llm.complete_with_schema(
+                "Return info for user John, age 30",
+                UserInfo
+            )
+            user = response.content  # Already a validated UserInfo instance
+            print(user.name, user.age)
+        """
+        # Extract JSON schema from Pydantic model
+        json_schema = schema_model.model_json_schema()
+
+        # Build response_format for LiteLLM
+        if strict:
+            response_format = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": schema_model.__name__,
+                    "schema": json_schema,
+                    "strict": True
+                }
+            }
+        else:
+            response_format = {"type": "json_object"}
+
+        # Attempt LLM call with schema
+        validation_mode = "strict" if strict else "fallback"
+        try:
+            response = self.complete(prompt, system, response_format=response_format, **kwargs)
+        except Exception as e:
+            # If strict schema fails (provider doesn't support it), retry with json_object mode
+            error_msg = str(e).lower()
+            if strict and ("schema" in error_msg or "strict" in error_msg or "json_schema" in error_msg):
+                # Fallback to json_object mode
+                response = self.complete(prompt, system, response_format={"type": "json_object"}, **kwargs)
+                validation_mode = "fallback"
+            else:
+                # Different error, re-raise
+                raise
+
+        # Parse and validate response against schema
+        try:
+            parsed_data = json.loads(response.content)
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                f"LLM returned invalid JSON for {schema_model.__name__} schema.\n"
+                f"Error: {e}\n"
+                f"Response preview: {response.content[:500]}"
+            ) from e
+
+        try:
+            validated_model = schema_model(**parsed_data)
+        except ValidationError as e:
+            raise ValueError(
+                f"LLM response failed schema validation for {schema_model.__name__}.\n"
+                f"Validation errors:\n{e}\n"
+                f"Response preview: {response.content[:500]}"
+            ) from e
+
+        # Update response with validated model and metadata
+        response.content = validated_model
+        response.schema_validation_mode = validation_mode
+        response.validation_attempted = True
+
+        return response
 
     def _build_request_params(self, messages: list[Message], **overrides) -> dict:
         """

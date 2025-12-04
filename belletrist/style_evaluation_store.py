@@ -307,7 +307,7 @@ class StyleEvaluationStore:
         timestamp = datetime.now().isoformat()
         self.conn.execute("""
             INSERT OR REPLACE INTO comparative_judgments
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             sample_id,
             reconstruction_run,

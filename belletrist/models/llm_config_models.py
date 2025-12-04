@@ -38,12 +38,14 @@ class LLMResponse(BaseModel):
     """Standardized response from any LLM call."""
     model_config = {"arbitrary_types_allowed": True}
 
-    content: str | None = None
+    content: str | BaseModel | None = None
     tool_calls: list[dict] | None = None
     finish_reason: str | None = None
     model: str | None = None
     usage: dict | None = None
     raw_response: Any = None
+    schema_validation_mode: Literal["strict", "fallback", "none"] | None = None
+    validation_attempted: bool = False
 
     @property
     def has_tool_calls(self) -> bool:
